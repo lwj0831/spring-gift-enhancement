@@ -27,6 +27,7 @@ public class ProductService {
 
   public PagedResult<GetProductResponseDto> getAllByPage(PageRequest pageRequest)
       throws IllegalArgumentException {
+    productValidator.validateProductSortField(pageRequest.sortInfo().field());
     List<Product> pagedProductList = productRepository.findAllByPage(pageRequest.offset(),
         pageRequest.pageSize(), pageRequest.sortInfo());
     return PagedResult.of(pagedProductList, pageRequest.offset(), pageRequest.pageSize())

@@ -4,22 +4,14 @@ import java.util.List;
 
 public class InvalidProductWords {
 
-  private final List<String> invalidWordList;
+  private static final List<String> invalidWordList = List.of("카카오");
 
-  private InvalidProductWords(List<String> words) {
-    this.invalidWordList = words.stream().toList();
-  }
-
-  public static InvalidProductWords getInvalidWords() {
-    return new InvalidProductWords(List.of("카카오"));
-  }
-
-  public boolean contains(String productName) {
+  public static boolean contains(String productName) {
     return invalidWordList.stream()
         .anyMatch(productName::contains);
   }
 
-  public List<String> findMatches(String productName) {
+  public static List<String> findMatches(String productName) {
     return invalidWordList.stream()
         .filter(productName::contains)
         .toList();
