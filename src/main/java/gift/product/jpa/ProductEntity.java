@@ -6,25 +6,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 public class ProductEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "product_id")
+  @Column(name = "id")
   private Long id;
   private String name;
   private int price;
   private String description;
   private String imageUrl;
 
-  public ProductEntity(){
+  public ProductEntity() {
   }
 
   public ProductEntity(Long id, String name, int price, String description, String imageUrl) {
@@ -35,7 +32,7 @@ public class ProductEntity {
     this.imageUrl = imageUrl;
   }
 
-  public void updateFromDomain(Product product){
+  public void updateFromDomain(Product product) {
     this.name = product.name();
     this.price = product.price();
     this.description = product.description();
