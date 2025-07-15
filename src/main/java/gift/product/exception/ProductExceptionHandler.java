@@ -30,6 +30,6 @@ public class ProductExceptionHandler {
   @ExceptionHandler(InvalidProductSortFieldException.class)
   public ResponseEntity<ErrorResponse> handleSortFieldException(
       InvalidProductSortFieldException exception) {
-    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(), exception);
+    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
   }
 }

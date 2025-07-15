@@ -103,7 +103,7 @@ class ProductApiStructuredE2ETest {
 
     assertAll(()->assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
         ()->assertThat(errorResponse.errorCode()).isEqualTo("PRODUCT-003"),
-        ()->assertThat(errorResponse.errorMessage()).contains("정렬 필드 값이 올바르지 않습니다"));
+        ()->assertThat(errorResponse.errorMessage()).contains("상품 페이징 정렬 필드 값이 올바르지 않습니다"));
   }
 
 
