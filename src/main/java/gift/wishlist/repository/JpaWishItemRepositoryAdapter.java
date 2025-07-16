@@ -9,10 +9,14 @@ import gift.wishlist.jpa.WishItemEntity;
 import gift.wishlist.jpa.WishItemMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Repository;
 
+@Repository
+@Primary
 public class JpaWishItemRepositoryAdapter implements WishItemRepository {
 
   private final JpaWishItemRepository jpaWishItemRepository;
