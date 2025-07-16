@@ -1,7 +1,6 @@
 package gift.wishlist.dto;
 
 import gift.product.domain.Product;
-import gift.product.dto.SimpleWishItemDto;
 
 public record GetWishItemResponseDto(
     Long productId,

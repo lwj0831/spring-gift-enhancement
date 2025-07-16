@@ -1,8 +1,8 @@
 package gift.wishlist.repository;
 
 import gift.global.common.dto.SortInfo;
-import gift.product.dto.SimpleWishItemDto;
 import gift.wishlist.domain.WishItem;
+import gift.wishlist.dto.SimpleWishItemDto;
 import java.util.List;
 import java.util.Optional;
 

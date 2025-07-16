@@ -17,7 +17,7 @@ public class ProductExceptionHandler {
   public ResponseEntity<ErrorResponse> handleProductNotFoundException(
       ProductNotFoundException exception) {
     logger.error("Product not found: {}", exception.getMessage());
-    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(), exception);
+    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
   }
 
   @ExceptionHandler(InvalidProductNameException.class)

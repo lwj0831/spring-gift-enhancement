@@ -23,10 +23,12 @@ public record Product(
 
   public static Product withId(Long id, Product product) {
     validateId(id);
-    return new Product(id, product.name, product.price, product.description, product.imageUrl);
+    return new Product(id, product.name, product.price, product.description,
+        product.imageUrl);
   }
 
-  public static Product of(String name, Integer price, String description, String imageUrl) {
+  public static Product of(String name, Integer price, String description,
+      String imageUrl) {
     return new Product(null, name, price, description, imageUrl);
   }
 

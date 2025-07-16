@@ -8,8 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="member")
+@Table(name = "member")
 public class MemberEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -24,7 +25,7 @@ public class MemberEntity {
     this.name = name;
   }
 
-  public void updateFromDomain(Member member){
+  public void updateFromDomain(Member member) {
     this.id = member.id();
     this.name = member.name();
   }

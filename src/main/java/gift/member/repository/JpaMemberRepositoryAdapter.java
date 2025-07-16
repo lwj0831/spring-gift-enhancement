@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Primary
-public class JpaMemberRepositoryAdapter implements MemberRepository{
+public class JpaMemberRepositoryAdapter implements MemberRepository {
+
   private final JpaMemberRepository jpaMemberRepository;
 
   public JpaMemberRepositoryAdapter(JpaMemberRepository jpaMemberRepository) {

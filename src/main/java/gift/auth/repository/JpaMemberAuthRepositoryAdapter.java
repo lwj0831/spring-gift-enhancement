@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Primary
-public class JpaMemberAuthRepositoryAdapter implements MemberAuthRepository{
+public class JpaMemberAuthRepositoryAdapter implements MemberAuthRepository {
+
   private final JpaMemberAuthRepository jpaMemberAuthRepository;
 
   public JpaMemberAuthRepositoryAdapter(JpaMemberAuthRepository jpaMemberAuthRepository) {
@@ -18,7 +19,8 @@ public class JpaMemberAuthRepositoryAdapter implements MemberAuthRepository{
 
   @Override
   public Long save(MemberAuth memberAuth) {
-    MemberAuthEntity memberAuthEntity = jpaMemberAuthRepository.save(MemberAuthMapper.toEntity(memberAuth));
+    MemberAuthEntity memberAuthEntity = jpaMemberAuthRepository.save(
+        MemberAuthMapper.toEntity(memberAuth));
     return memberAuthEntity.getId();
   }
 
