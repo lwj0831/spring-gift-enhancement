@@ -35,7 +35,7 @@ public class WishItemService {
     if (wishItemRepository.findByMemberIdAndProductId(member.id(), product.id()).isPresent()) {
       throw new WishItemAlreadyExistsException();
     }
-    return wishItemRepository.save(WishItem.of(memberId, dto.productId()));
+    return wishItemRepository.save(WishItem.of(member, product));
   }
 
   public List<GetWishItemResponseDto> findWishItems(Long memberId) {

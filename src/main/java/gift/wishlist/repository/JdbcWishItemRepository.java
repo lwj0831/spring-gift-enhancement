@@ -1,8 +1,10 @@
 package gift.wishlist.repository;
 
 import gift.global.common.dto.SortInfo;
-import gift.product.dto.SimpleWishItemDto;
+import gift.member.domain.Member;
+import gift.product.domain.Product;
 import gift.wishlist.domain.WishItem;
+import gift.wishlist.dto.SimpleWishItemDto;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,7 +13,6 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -23,12 +24,20 @@ public class JdbcWishItemRepository implements WishItemRepository {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
   private final SimpleJdbcInsert jdbcInsert;
-  private static final RowMapper<WishItem> wishItemRowMapper = (rs, rowNum) ->
-      WishItem.withId(
-          rs.getLong("id"),
-          rs.getLong("member_id"),
-          rs.getLong("product_id")
-      );
+
+  private static final RowMapper<WishItem> wishItemRowMapper = (rs, rowNum) -> {
+    Member member = Member.withId(rs.getLong("member_id"), rs.getString("member_name"));
+    Product product = Product.withId(
+        rs.getLong("product_id"),
+        rs.getString("product_name"),
+        rs.getInt("price"),
+        rs.getString("description"),
+        rs.getString("image_url")
+    );
+
+    return WishItem.withId(rs.getLong("id"), member, product);
+  };
+
   private static final RowMapper<SimpleWishItemDto> simpleWishItemRowMapper = (rs, rowNum) ->
       new SimpleWishItemDto(
           rs.getLong("id"),
@@ -53,8 +62,12 @@ public class JdbcWishItemRepository implements WishItemRepository {
 
   @Override
   public Long save(WishItem wishItem) {
-    Objects.requireNonNull("wishItem는 null일 수 없습니다.");
-    SqlParameterSource params = new BeanPropertySqlParameterSource(wishItem);
+    Objects.requireNonNull(wishItem, "wishItem는 null일 수 없습니다.");
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("member_id", wishItem.member().id())
+        .addValue("product_id", wishItem.product().id());
+
     Number key = jdbcInsert.executeAndReturnKey(params);
     return key.longValue();
   }
@@ -62,7 +75,17 @@ public class JdbcWishItemRepository implements WishItemRepository {
   @Override
   public Optional<WishItem> findById(Long id) {
     Objects.requireNonNull(id, "ID는 null일 수 없습니다.");
-    String sql = "SELECT * FROM wish_item WHERE id = :id";
+
+    String sql = """
+        SELECT w.id, w.member_id, w.product_id,
+               m.name as member_name,
+               p.name as product_name, p.price, p.description, p.image_url
+        FROM wish_item w
+        INNER JOIN member m ON w.member_id = m.id
+        INNER JOIN product p ON w.product_id = p.id
+        WHERE w.id = :id
+        """;
+
     try {
       Map<String, Object> params = Map.of("id", id);
       return Optional.of(jdbcTemplate.queryForObject(sql, params, wishItemRowMapper));
@@ -75,7 +98,17 @@ public class JdbcWishItemRepository implements WishItemRepository {
   public Optional<WishItem> findByMemberIdAndProductId(Long memberId, Long productId) {
     Objects.requireNonNull(memberId, "회원 id는 null일 수 없습니다.");
     Objects.requireNonNull(productId, "상품 id는 null일 수 없습니다.");
-    String sql = "SELECT * FROM wish_item WHERE member_id = :memberId AND product_id = :productId";
+
+    String sql = """
+        SELECT w.id, w.member_id, w.product_id,
+               m.name as member_name,
+               p.name as product_name, p.price, p.description, p.image_url
+        FROM wish_item w
+        INNER JOIN member m ON w.member_id = m.id
+        INNER JOIN product p ON w.product_id = p.id
+        WHERE w.member_id = :memberId AND w.product_id = :productId
+        """;
+
     try {
       MapSqlParameterSource params = new MapSqlParameterSource()
           .addValue("memberId", memberId)
@@ -105,7 +138,17 @@ public class JdbcWishItemRepository implements WishItemRepository {
   @Override
   public List<WishItem> findAllByMemberId(Long memberId) {
     Objects.requireNonNull(memberId, "회원 id는 null일 수 없습니다.");
-    String sql = "SELECT * FROM wish_item WHERE member_id = :memberId";
+
+    String sql = """
+        SELECT w.id, w.member_id, w.product_id,
+               m.name as member_name,
+               p.name as product_name, p.price, p.description, p.image_url
+        FROM wish_item w
+        INNER JOIN member m ON w.member_id = m.id
+        INNER JOIN product p ON w.product_id = p.id
+        WHERE w.member_id = :memberId
+        """;
+
     Map<String, Object> params = Map.of("memberId", memberId);
     return jdbcTemplate.query(sql, params, wishItemRowMapper);
   }
@@ -113,10 +156,17 @@ public class JdbcWishItemRepository implements WishItemRepository {
   @Override
   public List<WishItem> findAllByPage(int offset, int pageSize, SortInfo sortInfo, Long memberId) {
     String sortDirection = sortInfo.isAscending() ? "ASC" : "DESC";
-    String sql = String.format(
-        "SELECT * FROM wish_item WHERE member_id = :memberId ORDER BY %s %s LIMIT :limit OFFSET :offset",
-        sortInfo.field(), sortDirection
-    );
+    String sql = String.format("""
+        SELECT w.id, w.member_id, w.product_id,
+               m.name as member_name,
+               p.name as product_name, p.price, p.description, p.image_url
+        FROM wish_item w
+        INNER JOIN member m ON w.member_id = m.id
+        INNER JOIN product p ON w.product_id = p.id
+        WHERE w.member_id = :memberId 
+        ORDER BY w.%s %s 
+        LIMIT :limit OFFSET :offset
+        """, sortInfo.field(), sortDirection);
 
     MapSqlParameterSource params = new MapSqlParameterSource()
         .addValue("memberId", memberId)
@@ -139,4 +189,5 @@ public class JdbcWishItemRepository implements WishItemRepository {
       throw new IllegalArgumentException("삭제 실패");
     }
   }
+
 }
