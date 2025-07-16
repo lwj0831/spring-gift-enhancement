@@ -36,6 +36,11 @@ public class WishItemEntity {
     this.product = product;
   }
 
+  public void update(MemberEntity member, ProductEntity product) {
+    this.member = member;
+    this.product = product;
+  }
+
   public Long getId() {
     return id;
   }
