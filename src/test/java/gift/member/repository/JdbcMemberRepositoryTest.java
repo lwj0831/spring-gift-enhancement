@@ -1,12 +1,20 @@
 package gift.member.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import gift.member.domain.Member;
-import java.util.Optional;
 import java.util.Map;
-
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,16 +53,16 @@ class JdbcMemberRepositoryTest {
     Long result = repository.save(member);
 
     assertAll(
-        ()->assertEquals(expectedId, result),
-        ()->verify(jdbcInsert).executeAndReturnKey(any(SqlParameterSource.class))
+        () -> assertEquals(expectedId, result),
+        () -> verify(jdbcInsert).executeAndReturnKey(any(SqlParameterSource.class))
     );
   }
 
   @Test
   void 멤버_저장시_null이면_예외가_발생한다() {
     assertAll(
-        ()->assertThrows(NullPointerException.class, () -> repository.save(null)),
-        ()->verify(jdbcInsert, never()).executeAndReturnKey(any(SqlParameterSource.class))
+        () -> assertThrows(NullPointerException.class, () -> repository.save(null)),
+        () -> verify(jdbcInsert, never()).executeAndReturnKey(any(SqlParameterSource.class))
     );
 
   }
@@ -71,9 +79,10 @@ class JdbcMemberRepositoryTest {
     Optional<Member> result = repository.findById(id);
 
     assertAll(
-        ()->assertTrue(result.isPresent()),
-        ()->assertEquals(expectedMember, result.get()),
-        ()->verify(jdbcTemplate).queryForObject(eq(expectedSql), any(Map.class), any(RowMapper.class))
+        () -> assertTrue(result.isPresent()),
+        () -> assertEquals(expectedMember, result.get()),
+        () -> verify(jdbcTemplate).queryForObject(eq(expectedSql), any(Map.class),
+            any(RowMapper.class))
     );
   }
 
@@ -88,16 +97,18 @@ class JdbcMemberRepositoryTest {
     Optional<Member> result = repository.findById(id);
 
     assertAll(
-        ()->assertFalse(result.isPresent()),
-        ()->verify(jdbcTemplate).queryForObject(eq(expectedSql), any(Map.class), any(RowMapper.class))
+        () -> assertFalse(result.isPresent()),
+        () -> verify(jdbcTemplate).queryForObject(eq(expectedSql), any(Map.class),
+            any(RowMapper.class))
     );
   }
 
   @Test
   void ID가_null이면_조회시_예외가_발생한다() {
     assertAll(
-        ()->assertThrows(NullPointerException.class, () -> repository.findById(null)),
-        ()->verify(jdbcTemplate, never()).queryForObject(any(), any(Map.class), any(RowMapper.class))
+        () -> assertThrows(NullPointerException.class, () -> repository.findById(null)),
+        () -> verify(jdbcTemplate, never()).queryForObject(any(), any(Map.class),
+            any(RowMapper.class))
     );
   }
 
@@ -111,8 +122,8 @@ class JdbcMemberRepositoryTest {
         .thenReturn(1);
 
     assertAll(
-        ()->assertDoesNotThrow(() -> repository.update(id, updatedMember)),
-        ()->verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
+        () -> assertDoesNotThrow(() -> repository.update(id, updatedMember)),
+        () -> verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
     );
   }
 
@@ -130,8 +141,8 @@ class JdbcMemberRepositoryTest {
         () -> repository.update(id, updatedMember)
     );
     assertAll(
-        ()->assertEquals("member 수정 실패", exception.getMessage()),
-        ()->verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
+        () -> assertEquals("member 수정 실패", exception.getMessage()),
+        () -> verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
     );
   }
 
@@ -139,8 +150,9 @@ class JdbcMemberRepositoryTest {
   void 멤버_업데이트시_ID가_null이면_예외가_발생한다() {
     Member updatedMember = Member.of("kim");
     assertAll(
-        ()->assertThrows(NullPointerException.class, () -> repository.update(null, updatedMember)),
-        ()->verify(jdbcTemplate, never()).update(any(), any(SqlParameterSource.class))
+        () -> assertThrows(NullPointerException.class,
+            () -> repository.update(null, updatedMember)),
+        () -> verify(jdbcTemplate, never()).update(any(), any(SqlParameterSource.class))
     );
   }
 
@@ -148,8 +160,8 @@ class JdbcMemberRepositoryTest {
   void 멤버_업데이트시_객체가_null이면_예외가_발생한다() {
     Long id = 1L;
     assertAll(
-        ()->assertThrows(NullPointerException.class, () -> repository.update(id, null)),
-        ()->verify(jdbcTemplate, never()).update(any(), any(SqlParameterSource.class))
+        () -> assertThrows(NullPointerException.class, () -> repository.update(id, null)),
+        () -> verify(jdbcTemplate, never()).update(any(), any(SqlParameterSource.class))
     );
   }
 
@@ -162,8 +174,8 @@ class JdbcMemberRepositoryTest {
         .thenReturn(1);
 
     assertAll(
-        ()->assertDoesNotThrow(() -> repository.delete(id)),
-        ()->verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
+        () -> assertDoesNotThrow(() -> repository.delete(id)),
+        () -> verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
     );
   }
 
@@ -180,16 +192,16 @@ class JdbcMemberRepositoryTest {
         () -> repository.delete(id)
     );
     assertAll(
-        ()->assertEquals("member 삭제 실패", exception.getMessage()),
-        ()->verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
+        () -> assertEquals("member 삭제 실패", exception.getMessage()),
+        () -> verify(jdbcTemplate).update(eq(expectedSql), any(SqlParameterSource.class))
     );
   }
 
   @Test
   void 멤버_삭제시_ID가_null이면_예외가_발생한다() {
     assertAll(
-        ()->assertThrows(NullPointerException.class, () -> repository.delete(null)),
-        ()->verify(jdbcTemplate, never()).update(any(), any(SqlParameterSource.class))
+        () -> assertThrows(NullPointerException.class, () -> repository.delete(null)),
+        () -> verify(jdbcTemplate, never()).update(any(), any(SqlParameterSource.class))
     );
   }
 }

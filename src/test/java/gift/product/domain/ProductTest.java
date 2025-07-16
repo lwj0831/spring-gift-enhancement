@@ -1,14 +1,17 @@
 package gift.product.domain;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class ProductTest {
 
   @Test
   void of_정상_생성() {
-    Product product = Product.of("applePie", 3000, "sweet honey applePie", "http://aaa.com/apple.png");
+    Product product = Product.of("applePie", 3000, "sweet honey applePie",
+        "http://aaa.com/apple.png");
 
     assertNull(product.id());
     assertEquals("applePie", product.name());
@@ -19,7 +22,8 @@ class ProductTest {
 
   @Test
   void withId_정상_생성() {
-    Product product = Product.withId(1L, "applePie", 3000, "sweet honey applePie", "http://aaa.com/apple.png");
+    Product product = Product.withId(1L, "applePie", 3000, "sweet honey applePie",
+        "http://aaa.com/apple.png");
 
     assertEquals(1L, product.id());
     assertEquals("applePie", product.name());

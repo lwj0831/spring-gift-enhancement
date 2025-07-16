@@ -1,7 +1,6 @@
 package gift.product.e2e;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +37,8 @@ class ProductApiStructuredE2ETest {
 
   @Test
   void 상품등록_빈_이름으로_요청시_400_응답반환() throws Exception {
-    var request = new CreateProductRequestDto("   ", 1000, "설명입니다", "https://example.com/image.jpg");
+    var request = new CreateProductRequestDto("   ", 1000, "설명입니다",
+        "https://example.com/image.jpg");
 
     var response = createProductWithErrorResponse(request);
     ObjectMapper mapper = new ObjectMapper();
@@ -48,7 +48,8 @@ class ProductApiStructuredE2ETest {
     assertThat(errorResponse.errorCode()).isEqualTo("GLOBAL-001");
 
     @SuppressWarnings("unchecked")
-    List<Map<String, String>> invalidParams = (List<Map<String, String>>) errorResponse.extras().get("invalid-params");
+    List<Map<String, String>> invalidParams = (List<Map<String, String>>) errorResponse.extras()
+        .get("invalid-params");
 
     assertThat(invalidParams).anySatisfy(param -> {
       assertThat(param.get("name")).isEqualTo("name");
@@ -58,7 +59,8 @@ class ProductApiStructuredE2ETest {
 
   @Test
   void 상품등록_카카오포함된_이름으로_요청시_400_응답반환() throws Exception {
-    var request = new CreateProductRequestDto("카카오 초콜릿", 1000, "설명입니다", "https://example.com/image.jpg");
+    var request = new CreateProductRequestDto("카카오 초콜릿", 1000, "설명입니다",
+        "https://example.com/image.jpg");
 
     var response = createProductWithErrorResponse(request);
     ObjectMapper mapper = new ObjectMapper();
@@ -71,7 +73,8 @@ class ProductApiStructuredE2ETest {
 
   @Test
   void 상품등록_유효하지않은_가격으로_요청시_400_응답반환() throws Exception {
-    var request = new CreateProductRequestDto("상품이름", -10, "설명입니다", "https://example.com/image.jpg");
+    var request = new CreateProductRequestDto("상품이름", -10, "설명입니다",
+        "https://example.com/image.jpg");
 
     var response = createProductWithErrorResponse(request);
     ObjectMapper mapper = new ObjectMapper();
@@ -81,7 +84,8 @@ class ProductApiStructuredE2ETest {
     assertThat(errorResponse.errorCode()).isEqualTo("GLOBAL-001");
 
     @SuppressWarnings("unchecked")
-    List<Map<String, String>> invalidParams = (List<Map<String, String>>) errorResponse.extras().get("invalid-params");
+    List<Map<String, String>> invalidParams = (List<Map<String, String>>) errorResponse.extras()
+        .get("invalid-params");
 
     assertThat(invalidParams).anySatisfy(param -> {
       assertThat(param.get("name")).isEqualTo("price");
@@ -101,12 +105,10 @@ class ProductApiStructuredE2ETest {
     ObjectMapper mapper = new ObjectMapper();
     ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
 
-    assertAll(()->assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
-        ()->assertThat(errorResponse.errorCode()).isEqualTo("PRODUCT-003"),
-        ()->assertThat(errorResponse.errorMessage()).contains("상품 페이징 정렬 필드 값이 올바르지 않습니다"));
+    assertAll(() -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
+        () -> assertThat(errorResponse.errorCode()).isEqualTo("PRODUCT-003"),
+        () -> assertThat(errorResponse.errorMessage()).contains("상품 페이징 정렬 필드 값이 올바르지 않습니다"));
   }
-
-
 
 
   private CreateProductRequestDto createValidProductRequest() {

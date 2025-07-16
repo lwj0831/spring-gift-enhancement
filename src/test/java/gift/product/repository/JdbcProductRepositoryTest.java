@@ -1,9 +1,14 @@
 package gift.product.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
 
 import gift.global.common.dto.SortInfo;
 import gift.product.domain.Product;
@@ -37,7 +42,7 @@ class JdbcProductRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    repository = new JdbcProductRepository(jdbcTemplate,jdbcInsert);
+    repository = new JdbcProductRepository(jdbcTemplate, jdbcInsert);
 
     testProduct = new Product(null, "테스트 상품", 10000, "테스트 상품 설명", "http://test.com/image.jpg");
   }
@@ -65,7 +70,8 @@ class JdbcProductRepositoryTest {
   @Test
   void ID로_상품을_조회할_수_있다() {
     Long productId = 1L;
-    Product expectedProduct = new Product(1L, "테스트 상품", 10000, "테스트 상품 설명", "http://test.com/image.jpg");
+    Product expectedProduct = new Product(1L, "테스트 상품", 10000, "테스트 상품 설명",
+        "http://test.com/image.jpg");
 
     given(jdbcTemplate.queryForObject(
         eq("SELECT * FROM product WHERE id = :id"),
@@ -149,7 +155,8 @@ class JdbcProductRepositoryTest {
   @Test
   void 상품을_업데이트할_수_있다() {
     Long productId = 1L;
-    Product updatedProduct = new Product(productId, "수정된 상품", 15000, "수정된 설명", "http://test.com/updated.jpg");
+    Product updatedProduct = new Product(productId, "수정된 상품", 15000, "수정된 설명",
+        "http://test.com/updated.jpg");
 
     given(jdbcTemplate.update(
         eq("UPDATE product SET name = :name, price = :price, description = :description, image_url = :imageUrl WHERE id = :id"),
@@ -260,7 +267,8 @@ class JdbcProductRepositoryTest {
   @Test
   void 저장된_상품의_ID가_올바르게_설정된다() {
     Long expectedId = 1L;
-    Product expectedProduct = new Product(expectedId, "테스트 상품", 10000, "테스트 상품 설명", "http://test.com/image.jpg");
+    Product expectedProduct = new Product(expectedId, "테스트 상품", 10000, "테스트 상품 설명",
+        "http://test.com/image.jpg");
 
     given(jdbcInsert.executeAndReturnKey(any(SqlParameterSource.class)))
         .willReturn(expectedId);

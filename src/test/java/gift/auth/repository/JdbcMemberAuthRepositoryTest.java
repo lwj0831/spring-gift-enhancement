@@ -1,12 +1,21 @@
 package gift.auth.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import gift.auth.domain.MemberAuth;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +26,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 @ExtendWith(MockitoExtension.class)
 class JdbcMemberAuthRepositoryTest {
@@ -35,7 +43,7 @@ class JdbcMemberAuthRepositoryTest {
   @Test
   @DisplayName("memberAuth를 저장하면 memberId가 반환된다")
   void save_success() {
-    MemberAuth memberAuth = MemberAuth.withId(1L,"test@example.com", "password", "token");
+    MemberAuth memberAuth = MemberAuth.withId(1L, "test@example.com", "password", "token");
     Long expectedId = 1L;
 
     when(jdbcTemplate.update(anyString(), any(SqlParameterSource.class)))
@@ -62,7 +70,7 @@ class JdbcMemberAuthRepositoryTest {
   @DisplayName("ID로 memberAuth 조회 성공")
   void findById_success() {
     Long memberId = 1L;
-    MemberAuth expected = MemberAuth.withId(memberId,"test@example.com", "password", "token");
+    MemberAuth expected = MemberAuth.withId(memberId, "test@example.com", "password", "token");
     String sql = "SELECT * FROM member_auth WHERE member_id = :memberId";
 
     when(jdbcTemplate.queryForObject(eq(sql), any(Map.class), any(RowMapper.class)))
@@ -99,7 +107,8 @@ class JdbcMemberAuthRepositoryTest {
   void findById_null_id() {
     assertAll(
         () -> assertThrows(NullPointerException.class, () -> repository.findById(null)),
-        () -> verify(jdbcTemplate, never()).queryForObject(any(), any(Map.class), any(RowMapper.class))
+        () -> verify(jdbcTemplate, never()).queryForObject(any(), any(Map.class),
+            any(RowMapper.class))
     );
   }
 

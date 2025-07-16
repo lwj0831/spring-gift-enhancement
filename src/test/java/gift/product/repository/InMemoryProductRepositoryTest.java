@@ -1,7 +1,8 @@
 package gift.product.repository;
 
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import gift.global.common.dto.SortInfo;
@@ -92,7 +93,8 @@ class InMemoryProductRepositoryTest {
   @Test
   void 상품을_업데이트할_수_있다() {
     Long savedId = repository.save(testProduct);
-    Product updatedProduct = new Product(savedId, "수정된 상품", 15000, "수정된 설명", "http://test.com/updated.jpg");
+    Product updatedProduct = new Product(savedId, "수정된 상품", 15000, "수정된 설명",
+        "http://test.com/updated.jpg");
 
     repository.update(savedId, updatedProduct);
 
@@ -207,7 +209,8 @@ class InMemoryProductRepositoryTest {
       final int index = i;
       executorService.submit(() -> {
         try {
-          Product product = new Product(null, "상품" + index, 10000 + index, "설명" + index, "image" + index + ".jpg");
+          Product product = new Product(null, "상품" + index, 10000 + index, "설명" + index,
+              "image" + index + ".jpg");
           Long savedId = repository.save(product);
           savedIds.add(savedId);
         } finally {
@@ -296,7 +299,8 @@ class InMemoryProductRepositoryTest {
   void 동시에_저장과_조회를_수행해도_안전하다() throws InterruptedException {
     int saveThreadCount = 25;
     int readThreadCount = 25;
-    ExecutorService executorService = Executors.newFixedThreadPool(saveThreadCount + readThreadCount);
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        saveThreadCount + readThreadCount);
     CountDownLatch latch = new CountDownLatch(saveThreadCount + readThreadCount);
 
     Set<Long> savedIds = ConcurrentHashMap.newKeySet();
@@ -306,7 +310,8 @@ class InMemoryProductRepositoryTest {
       final int index = i;
       executorService.submit(() -> {
         try {
-          Product product = new Product(null, "동시상품" + index, 10000 + index, "설명" + index, "image" + index + ".jpg");
+          Product product = new Product(null, "동시상품" + index, 10000 + index, "설명" + index,
+              "image" + index + ".jpg");
           Long savedId = repository.save(product);
           savedIds.add(savedId);
         } finally {
