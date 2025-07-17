@@ -11,8 +11,8 @@ public record GetWishItemResponseDto(
 ) {
 
     public static GetWishItemResponseDto from(Product product) {
-        return new GetWishItemResponseDto(product.id(), product.name(), product.price(),
-            product.imageUrl());
+        return new GetWishItemResponseDto(product.getId(), product.getName(), product.getPrice(),
+            product.getImageUrl());
     }
 
     public static GetWishItemResponseDto from(SimpleWishItemDto dto) {
