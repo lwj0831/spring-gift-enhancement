@@ -1,8 +1,8 @@
 package gift.product.controller;
 
 import gift.global.common.annotation.PageParam;
-import gift.global.common.dto.PageRequest;
-import gift.global.common.dto.PagedResult;
+import gift.global.common.dto.PageRequestDto;
+import gift.global.common.dto.PageResponseDto;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.GetProductResponseDto;
 import gift.product.dto.UpdateProductRequestDto;
@@ -37,11 +37,12 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<PagedResult<GetProductResponseDto>> getProductByPageRequest(
-        @Valid @PageParam PageRequest pageRequest
+    public ResponseEntity<PageResponseDto<GetProductResponseDto>> getProductByPageRequest(
+        @Valid @PageParam PageRequestDto pageRequestDto
     ) {
-        PagedResult<GetProductResponseDto> pagedResult = productService.getAllByPage(pageRequest);
-        return ResponseEntity.ok(pagedResult);
+        PageResponseDto<GetProductResponseDto> pageResponseDto = productService.getAllByPage(
+            pageRequestDto);
+        return ResponseEntity.ok(pageResponseDto);
     }
 
     @PostMapping
