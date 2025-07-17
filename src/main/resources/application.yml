@@ -9,3 +9,5 @@ jwt:
   refresh-token-validity: ${REFRESH_TOKEN_VALIDITY:604800000}
   issuer: ${ISSUER:http://auth.gift-app.com}
 
+
+
