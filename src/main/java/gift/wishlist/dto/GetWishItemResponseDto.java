@@ -1,6 +1,7 @@
 package gift.wishlist.dto;
 
 import gift.product.domain.Product;
+import gift.wishlist.domain.WishItem;
 
 public record GetWishItemResponseDto(
     Long productId,
@@ -10,13 +11,10 @@ public record GetWishItemResponseDto(
 
 ) {
 
-    public static GetWishItemResponseDto from(Product product) {
+    public static GetWishItemResponseDto from(WishItem wishItem) {
+        Product product = wishItem.getProduct();
         return new GetWishItemResponseDto(product.getId(), product.getName(), product.getPrice(),
             product.getImageUrl());
-    }
-
-    public static GetWishItemResponseDto from(SimpleWishItemDto dto) {
-        return new GetWishItemResponseDto(dto.productId(), dto.name(), dto.price(), dto.imageUrl());
     }
 
 }

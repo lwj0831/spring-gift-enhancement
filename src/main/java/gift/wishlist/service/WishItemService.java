@@ -45,7 +45,7 @@ public class WishItemService {
     public List<GetWishItemResponseDto> findWishItems(Long memberId) {
         memberService.findMemberOrThrow(memberId);
 
-        return wishItemRepository.findWishItemsWithProductByMemberId(memberId).stream()
+        return wishItemRepository.findAllWithProductByMemberId(memberId).stream()
             .map(GetWishItemResponseDto::from)
             .toList();
     }
