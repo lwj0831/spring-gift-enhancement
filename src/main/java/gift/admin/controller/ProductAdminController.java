@@ -1,7 +1,7 @@
 package gift.admin.controller;
 
 import gift.global.common.annotation.PageParam;
-import gift.global.common.dto.PageRequest;
+import gift.global.common.dto.PageRequestDto;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.UpdateProductRequestDto;
 import gift.product.exception.ProductNotFoundException;
@@ -28,9 +28,9 @@ public class ProductAdminController {
     }
 
     @GetMapping
-    public String listProducts(@PageParam PageRequest pageRequest, Model model) {
+    public String listProducts(@PageParam PageRequestDto pageRequestDto, Model model) {
         try {
-            var result = productService.getAllByPage(pageRequest);
+            var result = productService.getAllByPage(pageRequestDto);
             model.addAttribute("products", result.content());
             return "product-list";
         } catch (Exception e) {

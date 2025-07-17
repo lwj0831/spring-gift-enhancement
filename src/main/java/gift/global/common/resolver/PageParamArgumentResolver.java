@@ -1,9 +1,10 @@
 package gift.global.common.resolver;
 
 import gift.global.common.annotation.PageParam;
-import gift.global.common.dto.PageRequest;
+import gift.global.common.dto.PageRequestDto;
 import gift.global.common.dto.SortInfo;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -22,7 +23,7 @@ public class PageParamArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(PageParam.class)
-            && parameter.getParameterType().equals(PageRequest.class);
+            && parameter.getParameterType().equals(PageRequestDto.class);
     }
 
     @Override
@@ -32,12 +33,12 @@ public class PageParamArgumentResolver implements HandlerMethodArgumentResolver 
         return parsePageRequest(webRequest);
     }
 
-    private PageRequest parsePageRequest(NativeWebRequest webRequest) {
+    private PageRequestDto parsePageRequest(NativeWebRequest webRequest) {
         int offset = parseOffset(webRequest.getParameter(OFFSET_PARAM_KEY));
         int pageSize = parsePageSize(webRequest.getParameter(PAGE_SIZE_PARAM_KEY));
         SortInfo sortInfo = parseSortInfo(webRequest.getParameter(SORT_PARAM_KEY));
 
-        return new PageRequest(offset, pageSize, sortInfo);
+        return new PageRequestDto(offset, pageSize, sortInfo);
     }
 
     private int parseOffset(String offsetParam) {
@@ -66,13 +67,16 @@ public class PageParamArgumentResolver implements HandlerMethodArgumentResolver 
 
     private SortInfo parseSortInfo(String sortParamValue) {
         if (sortParamValue == null || sortParamValue.isEmpty()) {
-            return new SortInfo(DEFAULT_SORT_FIELD, true);
+            return new SortInfo(DEFAULT_SORT_FIELD, Direction.ASC);
         }
 
         String[] sortParams = sortParamValue.split(SORT_DELIMITER);
         String sortField = sortParams[0].trim();
-        boolean isAscending = sortParams.length < 2 || sortParams[1].trim().equalsIgnoreCase("asc");
+        Direction sortDirection =
+            (sortParams.length < 2 || "asc".equalsIgnoreCase(sortParams[1].trim()))
+                ? Direction.ASC
+                : Direction.DESC;
 
-        return new SortInfo(sortField, isAscending);
+        return new SortInfo(sortField, sortDirection);
     }
 }
