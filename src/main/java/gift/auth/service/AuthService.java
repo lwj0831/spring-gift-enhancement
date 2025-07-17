@@ -59,14 +59,14 @@ public class AuthService {
     public LoginResponseDto login(LoginRequestDto dto) {
         String email = dto.email();
         MemberAuth memberAuth = memberAuthRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
+            .orElseThrow(() -> new MemberNotFoundException(email));
 
         if (!passwordEncoder.matches(dto.password(), memberAuth.getPassword())) {
             throw new PasswordMismatchException();
         }
 
         Member member = memberRepository.findById(memberAuth.getId())
-            .orElseThrow(MemberNotFoundException::new);
+            .orElseThrow(() -> new MemberNotFoundException(memberAuth.getId()));
 
         TokenInfo tokenInfo = tokenService.generateBearerTokenInfo(member.getId(), email);
         return LoginResponseDto.from(tokenInfo);
@@ -81,8 +81,7 @@ public class AuthService {
 
         String email = tokenService.getEmail(refreshToken);
         Long memberId = tokenService.getUserId(refreshToken);
-        MemberAuth memberAuth = memberAuthRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
+        MemberAuth memberAuth = findMemberAuthOrThrow(memberId);
 
         if (!memberAuth.matchRefreshToken(refreshToken)) {
             throw new InvalidTokenException();
@@ -95,9 +94,14 @@ public class AuthService {
     @Transactional
     public void logout(String email) {
         MemberAuth memberAuth = memberAuthRepository.findByEmail(email)
-            .orElseThrow(MemberNotFoundException::new);
+            .orElseThrow(() -> new MemberNotFoundException(email));
 
         memberAuth.expiredRefreshToken();
+    }
+
+    private MemberAuth findMemberAuthOrThrow(Long id) {
+        return memberAuthRepository.findById(id)
+            .orElseThrow(() -> new MemberNotFoundException(id));
     }
 
 }

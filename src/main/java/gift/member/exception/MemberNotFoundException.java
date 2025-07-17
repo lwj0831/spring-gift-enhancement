@@ -1,20 +1,14 @@
 package gift.member.exception;
 
-public class MemberNotFoundException extends RuntimeException {
+import gift.global.exception.DomainNotFoundException;
 
-    private final MemberErrorCode errorCode;
+public class MemberNotFoundException extends DomainNotFoundException {
 
-    public MemberNotFoundException() {
-        super(MemberErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
-        this.errorCode = MemberErrorCode.MEMBER_NOT_FOUND;
+    public MemberNotFoundException(Long id) {
+        super(MemberErrorCode.MEMBER_NOT_FOUND, id);
     }
 
-    public MemberNotFoundException(String message) {
-        super(message);
-        this.errorCode = MemberErrorCode.MEMBER_NOT_FOUND;
-    }
-
-    public MemberErrorCode getErrorCode() {
-        return errorCode;
+    public MemberNotFoundException(String email) {
+        super(MemberErrorCode.MEMBER_NOT_FOUND, email);
     }
 }

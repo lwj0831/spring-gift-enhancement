@@ -74,6 +74,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Product findProductOrThrow(Long productId) {
-        return productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+        return productRepository.findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 }

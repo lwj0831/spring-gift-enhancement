@@ -59,6 +59,6 @@ public class WishItemService {
 
     @Transactional(readOnly = true)
     public WishItem findWishItemOrThrow(Long id) {
-        return wishItemRepository.findById(id).orElseThrow(WishItemNotFoundException::new);
+        return wishItemRepository.findById(id).orElseThrow(() -> new WishItemNotFoundException(id));
     }
 }
