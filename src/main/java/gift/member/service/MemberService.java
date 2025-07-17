@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberService {
 
-  private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-  public MemberService(MemberRepository memberRepository) {
-    this.memberRepository = memberRepository;
-  }
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
-  public Member findMemberOrThrow(Long memberId) {
-    return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-  }
+    public Member findMemberOrThrow(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+    }
 }

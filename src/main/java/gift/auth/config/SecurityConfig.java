@@ -25,47 +25,48 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Profile({"default", "dev"})
 public class SecurityConfig {
 
-  private final JwtValidationFilter jwtValidationFilter;
-  private final AuthenticationEntryPoint authenticationEntryPoint;
-  private final AccessDeniedHandler accessDeniedHandler;
+    private final JwtValidationFilter jwtValidationFilter;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
-  public SecurityConfig(JwtValidationFilter jwtValidationFilter,
-      AuthenticationEntryPoint authenticationEntryPoint, AccessDeniedHandler accessDeniedHandler) {
-    this.jwtValidationFilter = jwtValidationFilter;
-    this.authenticationEntryPoint = authenticationEntryPoint;
-    this.accessDeniedHandler = accessDeniedHandler;
-  }
+    public SecurityConfig(JwtValidationFilter jwtValidationFilter,
+        AuthenticationEntryPoint authenticationEntryPoint,
+        AccessDeniedHandler accessDeniedHandler) {
+        this.jwtValidationFilter = jwtValidationFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
+    }
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.cors(Customizer.withDefaults())
-        .csrf(AbstractHttpConfigurer::disable)
-        .headers(headers -> headers
-            .defaultsDisabled()
-            .frameOptions(FrameOptionsConfig::sameOrigin)
-        )
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh",
-                "/h2-console/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()
-            .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()
-            .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
-            .requestMatchers("/api/wishItems/**").authenticated()
-            .anyRequest().permitAll()
-        )
-        .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling(exceptions -> exceptions
-            .authenticationEntryPoint(authenticationEntryPoint)
-            .accessDeniedHandler(accessDeniedHandler)
-        );
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .headers(headers -> headers
+                .defaultsDisabled()
+                .frameOptions(FrameOptionsConfig::sameOrigin)
+            )
+            .sessionManagement(
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh",
+                    "/h2-console/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
+                .requestMatchers("/api/wishItems/**").authenticated()
+                .anyRequest().permitAll()
+            )
+            .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+            );
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

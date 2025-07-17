@@ -12,16 +12,16 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class ProductRepositoryConfig {
 
-  @Bean
-  @Profile({"test", "dev"})
-  public ProductRepository jpaProductRepositoryBean(JpaProductRepository jpaProductRepository) {
-    return new JpaProductRepositoryAdapter(jpaProductRepository);
-  }
+    @Bean
+    @Profile({"test", "dev"})
+    public ProductRepository jpaProductRepositoryBean(JpaProductRepository jpaProductRepository) {
+        return new JpaProductRepositoryAdapter(jpaProductRepository);
+    }
 
-  @Bean
-  @Profile("default")
-  public ProductRepository jdbcProductRepositoryBean(DataSource dataSource) {
-    return new JdbcProductRepository(dataSource);
-  }
+    @Bean
+    @Profile("default")
+    public ProductRepository jdbcProductRepositoryBean(DataSource dataSource) {
+        return new JdbcProductRepository(dataSource);
+    }
 }
 

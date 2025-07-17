@@ -20,30 +20,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/wish-items")
 public class WishItemController {
 
-  private final WishItemService wishItemService;
+    private final WishItemService wishItemService;
 
-  public WishItemController(WishItemService wishItemService) {
-    this.wishItemService = wishItemService;
-  }
+    public WishItemController(WishItemService wishItemService) {
+        this.wishItemService = wishItemService;
+    }
 
-  @GetMapping
-  public ResponseEntity<List<GetWishItemResponseDto>> getWishItems(@LoginUser Long memberId) {
-    List<GetWishItemResponseDto> wishItems = wishItemService.findWishItems(memberId);
-    return ResponseEntity.ok(wishItems);
-  }
+    @GetMapping
+    public ResponseEntity<List<GetWishItemResponseDto>> getWishItems(@LoginUser Long memberId) {
+        List<GetWishItemResponseDto> wishItems = wishItemService.findWishItems(memberId);
+        return ResponseEntity.ok(wishItems);
+    }
 
-  @PostMapping
-  public ResponseEntity<Void> addWishItem(@LoginUser Long memberId,
-      @Valid @RequestBody RegisterWishItemRequestDto dto) {
-    Long id = wishItemService.registerWishItem(memberId, dto);
-    URI uri = URI.create("/api/wish-items" + id);
-    return ResponseEntity.created(uri).build();
-  }
+    @PostMapping
+    public ResponseEntity<Void> addWishItem(@LoginUser Long memberId,
+        @Valid @RequestBody RegisterWishItemRequestDto dto) {
+        Long id = wishItemService.registerWishItem(memberId, dto);
+        URI uri = URI.create("/api/wish-items" + id);
+        return ResponseEntity.created(uri).build();
+    }
 
-  @DeleteMapping("/{wishItemId}")
-  public ResponseEntity<Void> deleteWishItem(@PathVariable(name = "wishItemId") Long id) {
-    wishItemService.deleteWishItem(id);
-    return ResponseEntity.noContent().build();
-  }
+    @DeleteMapping("/{wishItemId}")
+    public ResponseEntity<Void> deleteWishItem(@PathVariable(name = "wishItemId") Long id) {
+        wishItemService.deleteWishItem(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

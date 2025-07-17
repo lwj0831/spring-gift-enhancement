@@ -15,41 +15,41 @@ import jakarta.persistence.Table;
 @Table(name = "wish_item")
 public class WishItemEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "member_id")
-  private MemberEntity member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberEntity member;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id")
-  private ProductEntity product;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
 
-  public WishItemEntity() {
-  }
+    public WishItemEntity() {
+    }
 
-  public WishItemEntity(Long id, MemberEntity member, ProductEntity product) {
-    this.id = id;
-    this.member = member;
-    this.product = product;
-  }
+    public WishItemEntity(Long id, MemberEntity member, ProductEntity product) {
+        this.id = id;
+        this.member = member;
+        this.product = product;
+    }
 
-  public void update(MemberEntity member, ProductEntity product) {
-    this.member = member;
-    this.product = product;
-  }
+    public void update(MemberEntity member, ProductEntity product) {
+        this.member = member;
+        this.product = product;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public MemberEntity getMember() {
-    return member;
-  }
+    public MemberEntity getMember() {
+        return member;
+    }
 
-  public ProductEntity getProduct() {
-    return product;
-  }
+    public ProductEntity getProduct() {
+        return product;
+    }
 }

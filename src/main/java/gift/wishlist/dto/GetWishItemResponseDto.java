@@ -10,13 +10,13 @@ public record GetWishItemResponseDto(
 
 ) {
 
-  public static GetWishItemResponseDto from(Product product) {
-    return new GetWishItemResponseDto(product.id(), product.name(), product.price(),
-        product.imageUrl());
-  }
+    public static GetWishItemResponseDto from(Product product) {
+        return new GetWishItemResponseDto(product.id(), product.name(), product.price(),
+            product.imageUrl());
+    }
 
-  public static GetWishItemResponseDto from(SimpleWishItemDto dto) {
-    return new GetWishItemResponseDto(dto.productId(), dto.name(), dto.price(), dto.imageUrl());
-  }
+    public static GetWishItemResponseDto from(SimpleWishItemDto dto) {
+        return new GetWishItemResponseDto(dto.productId(), dto.name(), dto.price(), dto.imageUrl());
+    }
 
 }

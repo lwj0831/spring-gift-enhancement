@@ -23,80 +23,80 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthService {
 
-  private final MemberAuthRepository memberAuthRepository;
-  private final MemberRepository memberRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final TokenService tokenService;
+    private final MemberAuthRepository memberAuthRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
-  public AuthService(MemberAuthRepository memberAuthRepository, MemberRepository memberRepository,
-      PasswordEncoder passwordEncoder, TokenService tokenService) {
-    this.memberAuthRepository = memberAuthRepository;
-    this.memberRepository = memberRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.tokenService = tokenService;
-  }
-
-  @Transactional
-  public RegisterMemberResponseDto registerMember(RegisterMemberRequestDto dto) {
-    String email = dto.email();
-    if (memberAuthRepository.findByEmail(email).isPresent()) {
-      throw new DuplicatedEmailException();
+    public AuthService(MemberAuthRepository memberAuthRepository, MemberRepository memberRepository,
+        PasswordEncoder passwordEncoder, TokenService tokenService) {
+        this.memberAuthRepository = memberAuthRepository;
+        this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
     }
 
-    Member member = Member.of(dto.username());
-    Long memberId = memberRepository.save(member);
-    String encodedPassword = passwordEncoder.encode(dto.password());
+    @Transactional
+    public RegisterMemberResponseDto registerMember(RegisterMemberRequestDto dto) {
+        String email = dto.email();
+        if (memberAuthRepository.findByEmail(email).isPresent()) {
+            throw new DuplicatedEmailException();
+        }
 
-    MemberAuth memberAuth = MemberAuth.withId(memberId, dto.email(), encodedPassword);
-    memberAuthRepository.save(memberAuth);
+        Member member = Member.of(dto.username());
+        Long memberId = memberRepository.save(member);
+        String encodedPassword = passwordEncoder.encode(dto.password());
 
-    TokenResponse tokenResponse = tokenService.generateBearerTokenResponse(memberId, email);
-    return RegisterMemberResponseDto.from(tokenResponse, memberId);
-  }
+        MemberAuth memberAuth = MemberAuth.withId(memberId, dto.email(), encodedPassword);
+        memberAuthRepository.save(memberAuth);
 
-  @Transactional
-  public LoginResponseDto login(LoginRequestDto dto) {
-    String email = dto.email();
-    MemberAuth memberAuth = memberAuthRepository.findByEmail(email)
-        .orElseThrow(MemberNotFoundException::new);
-
-    if (!passwordEncoder.matches(dto.password(), memberAuth.password())) {
-      throw new PasswordMismatchException();
+        TokenResponse tokenResponse = tokenService.generateBearerTokenResponse(memberId, email);
+        return RegisterMemberResponseDto.from(tokenResponse, memberId);
     }
 
-    Member member = memberRepository.findById(memberAuth.memberId())
-        .orElseThrow(MemberNotFoundException::new);
+    @Transactional
+    public LoginResponseDto login(LoginRequestDto dto) {
+        String email = dto.email();
+        MemberAuth memberAuth = memberAuthRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
 
-    TokenResponse tokenResponse = tokenService.generateBearerTokenResponse(member.id(), email);
-    return LoginResponseDto.from(tokenResponse);
-  }
+        if (!passwordEncoder.matches(dto.password(), memberAuth.password())) {
+            throw new PasswordMismatchException();
+        }
 
-  @Transactional
-  public LoginResponseDto refreshToken(RefreshTokenRequestDto dto) {
-    String refreshToken = dto.refreshToken();
-    if (!tokenService.isValidToken(refreshToken)) {
-      throw new ExpiredTokenException();
+        Member member = memberRepository.findById(memberAuth.memberId())
+            .orElseThrow(MemberNotFoundException::new);
+
+        TokenResponse tokenResponse = tokenService.generateBearerTokenResponse(member.id(), email);
+        return LoginResponseDto.from(tokenResponse);
     }
 
-    String email = tokenService.getEmail(refreshToken);
-    Long memberId = tokenService.getUserId(refreshToken);
-    MemberAuth memberAuth = memberAuthRepository.findById(memberId)
-        .orElseThrow(MemberNotFoundException::new);
+    @Transactional
+    public LoginResponseDto refreshToken(RefreshTokenRequestDto dto) {
+        String refreshToken = dto.refreshToken();
+        if (!tokenService.isValidToken(refreshToken)) {
+            throw new ExpiredTokenException();
+        }
 
-    if (!refreshToken.equals(memberAuth.refreshToken())) {
-      throw new InvalidTokenException();
+        String email = tokenService.getEmail(refreshToken);
+        Long memberId = tokenService.getUserId(refreshToken);
+        MemberAuth memberAuth = memberAuthRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
+
+        if (!refreshToken.equals(memberAuth.refreshToken())) {
+            throw new InvalidTokenException();
+        }
+
+        TokenResponse tokenResponse = tokenService.generateBearerTokenResponse(memberId, email);
+        return LoginResponseDto.from(tokenResponse);
     }
 
-    TokenResponse tokenResponse = tokenService.generateBearerTokenResponse(memberId, email);
-    return LoginResponseDto.from(tokenResponse);
-  }
+    @Transactional
+    public void logout(String email) {
+        MemberAuth memberAuth = memberAuthRepository.findByEmail(email)
+            .orElseThrow(MemberNotFoundException::new);
 
-  @Transactional
-  public void logout(String email) {
-    MemberAuth memberAuth = memberAuthRepository.findByEmail(email)
-        .orElseThrow(MemberNotFoundException::new);
-
-    memberAuthRepository.updateRefreshToken(memberAuth.memberId(), null);
-  }
+        memberAuthRepository.updateRefreshToken(memberAuth.memberId(), null);
+    }
 
 }

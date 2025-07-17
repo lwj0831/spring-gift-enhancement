@@ -15,55 +15,56 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-      MethodArgumentNotValidException exception) {
-    logger.error("MethodArgumentNotValidException. occurred: {}", exception.getMessage(),
-        exception);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException exception) {
+        logger.error("MethodArgumentNotValidException. occurred: {}", exception.getMessage(),
+            exception);
 
-    List<Map<String, String>> invalidParams = exception.getFieldErrors().stream()
-        .map(fieldError -> Map.of(
-            "name", fieldError.getField(),
-            "value", fieldError.getRejectedValue().toString(),
-            "reason", fieldError.getDefaultMessage()
-        ))
-        .toList();
+        List<Map<String, String>> invalidParams = exception.getFieldErrors().stream()
+            .map(fieldError -> Map.of(
+                "name", fieldError.getField(),
+                "value", fieldError.getRejectedValue().toString(),
+                "reason", fieldError.getDefaultMessage()
+            ))
+            .toList();
 
-    Map<String, Object> additionalInfo = Map.of("invalid-params", invalidParams);
+        Map<String, Object> additionalInfo = Map.of("invalid-params", invalidParams);
 
-    return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
-        exception,
-        additionalInfo);
-  }
+        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
+            exception,
+            additionalInfo);
+    }
 
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ErrorResponse> handleConstraintViolationException(
-      ConstraintViolationException exception) {
-    logger.error("ConstraintViolationException occurred: {}", exception.getMessage(), exception);
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(
+        ConstraintViolationException exception) {
+        logger.error("ConstraintViolationException occurred: {}", exception.getMessage(),
+            exception);
 
-    List<Map<String, String>> invalidParams = exception.getConstraintViolations().stream()
-        .map(violation -> Map.of(
-            "name", PropertyPathUtils.extractFieldName(violation.getPropertyPath().toString()),
-            "value", violation.getInvalidValue().toString(),
-            "reason", violation.getMessage()
-        ))
-        .toList();
+        List<Map<String, String>> invalidParams = exception.getConstraintViolations().stream()
+            .map(violation -> Map.of(
+                "name", PropertyPathUtils.extractFieldName(violation.getPropertyPath().toString()),
+                "value", violation.getInvalidValue().toString(),
+                "reason", violation.getMessage()
+            ))
+            .toList();
 
-    Map<String, Object> additionalInfo = Map.of("invalid-params", invalidParams);
+        Map<String, Object> additionalInfo = Map.of("invalid-params", invalidParams);
 
-    return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
-        exception,
-        additionalInfo);
-  }
+        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
+            exception,
+            additionalInfo);
+    }
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
-      IllegalArgumentException exception) {
-    logger.error("IllegalArgumentException occurred: {}", exception.getMessage(), exception);
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+        IllegalArgumentException exception) {
+        logger.error("IllegalArgumentException occurred: {}", exception.getMessage(), exception);
 
-    return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
-        exception);
-  }
+        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
+            exception);
+    }
 }

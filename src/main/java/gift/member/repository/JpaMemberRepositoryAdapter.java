@@ -12,32 +12,32 @@ import org.springframework.stereotype.Repository;
 @Primary
 public class JpaMemberRepositoryAdapter implements MemberRepository {
 
-  private final JpaMemberRepository jpaMemberRepository;
+    private final JpaMemberRepository jpaMemberRepository;
 
-  public JpaMemberRepositoryAdapter(JpaMemberRepository jpaMemberRepository) {
-    this.jpaMemberRepository = jpaMemberRepository;
-  }
+    public JpaMemberRepositoryAdapter(JpaMemberRepository jpaMemberRepository) {
+        this.jpaMemberRepository = jpaMemberRepository;
+    }
 
-  @Override
-  public Long save(Member member) {
-    MemberEntity memberEntity = jpaMemberRepository.save(MemberMapper.toEntity(member));
-    return memberEntity.getId();
-  }
+    @Override
+    public Long save(Member member) {
+        MemberEntity memberEntity = jpaMemberRepository.save(MemberMapper.toEntity(member));
+        return memberEntity.getId();
+    }
 
-  @Override
-  public Optional<Member> findById(Long id) {
-    return jpaMemberRepository.findById(id).map(MemberMapper::toDomain);
-  }
+    @Override
+    public Optional<Member> findById(Long id) {
+        return jpaMemberRepository.findById(id).map(MemberMapper::toDomain);
+    }
 
-  @Override
-  public void update(Long id, Member updatedMember) {
-    MemberEntity memberEntity = jpaMemberRepository.findById(id)
-        .orElseThrow(MemberNotFoundException::new);
-    memberEntity.updateFromDomain(updatedMember);
-  }
+    @Override
+    public void update(Long id, Member updatedMember) {
+        MemberEntity memberEntity = jpaMemberRepository.findById(id)
+            .orElseThrow(MemberNotFoundException::new);
+        memberEntity.updateFromDomain(updatedMember);
+    }
 
-  @Override
-  public void delete(Long id) {
-    jpaMemberRepository.deleteById(id);
-  }
+    @Override
+    public void delete(Long id) {
+        jpaMemberRepository.deleteById(id);
+    }
 }

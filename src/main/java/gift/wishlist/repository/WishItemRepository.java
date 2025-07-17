@@ -8,18 +8,18 @@ import java.util.Optional;
 
 public interface WishItemRepository {
 
-  Long save(WishItem wishItem);
+    Long save(WishItem wishItem);
 
-  Optional<WishItem> findById(Long id);
+    Optional<WishItem> findById(Long id);
 
-  Optional<WishItem> findByMemberIdAndProductId(Long memberId, Long productId);
+    Optional<WishItem> findByMemberIdAndProductId(Long memberId, Long productId);
 
-  List<SimpleWishItemDto> findWishItemsWithProductByMemberId(Long memberId);
+    List<SimpleWishItemDto> findWishItemsWithProductByMemberId(Long memberId);
 
-  List<WishItem> findAllByMemberId(Long memberId);
+    List<WishItem> findAllByMemberId(Long memberId);
 
-  List<WishItem> findAllByPage(int offset, int pageSize, SortInfo sortInfo, Long memberId);
+    List<WishItem> findAllByPage(int offset, int pageSize, SortInfo sortInfo, Long memberId);
 
-  void deleteById(Long id);
+    void deleteById(Long id);
 
 }

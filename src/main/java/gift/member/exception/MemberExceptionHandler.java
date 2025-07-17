@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class MemberExceptionHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(ProductExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductExceptionHandler.class);
 
-  @ExceptionHandler(MemberNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleMemberNotFoundException(
-      MemberNotFoundException exception) {
-    logger.error("Member not found: {}", exception.getMessage(), exception);
-    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
-  }
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMemberNotFoundException(
+        MemberNotFoundException exception) {
+        logger.error("Member not found: {}", exception.getMessage(), exception);
+        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+    }
 
 }

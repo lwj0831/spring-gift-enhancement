@@ -11,9 +11,9 @@ public record RegisterMemberResponseDto(
     Long memberId
 ) {
 
-  public static RegisterMemberResponseDto from(TokenResponse res, Long memberId) {
-    return new RegisterMemberResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
-        res.refreshToken(), res.refreshTokenExpiresIn(), memberId);
-  }
+    public static RegisterMemberResponseDto from(TokenResponse res, Long memberId) {
+        return new RegisterMemberResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
+            res.refreshToken(), res.refreshTokenExpiresIn(), memberId);
+    }
 
 }

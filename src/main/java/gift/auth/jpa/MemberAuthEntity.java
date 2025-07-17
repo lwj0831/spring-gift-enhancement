@@ -9,48 +9,48 @@ import jakarta.persistence.Table;
 @Table(name = "member_auth")
 public class MemberAuthEntity {
 
-  @Id
-  private Long id;
+    @Id
+    private Long id;
 
-  private String email;
-  private String password;
-  private String refreshToken;
+    private String email;
+    private String password;
+    private String refreshToken;
 
-  public MemberAuthEntity() {
-  }
+    public MemberAuthEntity() {
+    }
 
-  public MemberAuthEntity(Long id, String email, String password, String refreshToken) {
-    this.id = id;
-    this.email = email;
-    this.password = password;
-    this.refreshToken = refreshToken;
-  }
+    public MemberAuthEntity(Long id, String email, String password, String refreshToken) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.refreshToken = refreshToken;
+    }
 
-  public void updateFromDomain(MemberAuth memberAuth) {
-    this.id = memberAuth.memberId();
-    this.email = memberAuth.email().getEmailText();
-    this.password = memberAuth.password();
-    ;
-    this.refreshToken = memberAuth.refreshToken();
-  }
+    public void updateFromDomain(MemberAuth memberAuth) {
+        this.id = memberAuth.memberId();
+        this.email = memberAuth.email().getEmailText();
+        this.password = memberAuth.password();
+        ;
+        this.refreshToken = memberAuth.refreshToken();
+    }
 
-  public void updateRefreshToken(String refreshToken) {
-    this.refreshToken = refreshToken;
-  }
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public String getEmail() {
-    return email;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public String getRefreshToken() {
-    return refreshToken;
-  }
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 }

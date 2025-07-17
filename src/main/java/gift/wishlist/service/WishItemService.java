@@ -17,41 +17,41 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WishItemService {
 
-  private final WishItemRepository wishItemRepository;
-  private final MemberService memberService;
-  private final ProductService productService;
+    private final WishItemRepository wishItemRepository;
+    private final MemberService memberService;
+    private final ProductService productService;
 
-  public WishItemService(WishItemRepository wishItemRepository, MemberService memberService,
-      ProductService productService) {
-    this.wishItemRepository = wishItemRepository;
-    this.memberService = memberService;
-    this.productService = productService;
-  }
-
-  @Transactional
-  public Long registerWishItem(Long memberId, RegisterWishItemRequestDto dto) {
-    Member member = memberService.findMemberOrThrow(memberId);
-    Product product = productService.findProductOrThrow(dto.productId());
-    if (wishItemRepository.findByMemberIdAndProductId(member.id(), product.id()).isPresent()) {
-      throw new WishItemAlreadyExistsException();
+    public WishItemService(WishItemRepository wishItemRepository, MemberService memberService,
+        ProductService productService) {
+        this.wishItemRepository = wishItemRepository;
+        this.memberService = memberService;
+        this.productService = productService;
     }
-    return wishItemRepository.save(WishItem.of(member, product));
-  }
 
-  public List<GetWishItemResponseDto> findWishItems(Long memberId) {
-    memberService.findMemberOrThrow(memberId);
-    return wishItemRepository.findWishItemsWithProductByMemberId(memberId).stream()
-        .map(GetWishItemResponseDto::from)
-        .toList();
-  }
+    @Transactional
+    public Long registerWishItem(Long memberId, RegisterWishItemRequestDto dto) {
+        Member member = memberService.findMemberOrThrow(memberId);
+        Product product = productService.findProductOrThrow(dto.productId());
+        if (wishItemRepository.findByMemberIdAndProductId(member.id(), product.id()).isPresent()) {
+            throw new WishItemAlreadyExistsException();
+        }
+        return wishItemRepository.save(WishItem.of(member, product));
+    }
 
-  @Transactional
-  public void deleteWishItem(Long id) {
-    findWishItemOrThrow(id);
-    wishItemRepository.deleteById(id);
-  }
+    public List<GetWishItemResponseDto> findWishItems(Long memberId) {
+        memberService.findMemberOrThrow(memberId);
+        return wishItemRepository.findWishItemsWithProductByMemberId(memberId).stream()
+            .map(GetWishItemResponseDto::from)
+            .toList();
+    }
 
-  public WishItem findWishItemOrThrow(Long id) {
-    return wishItemRepository.findById(id).orElseThrow(WishItemNotFoundException::new);
-  }
+    @Transactional
+    public void deleteWishItem(Long id) {
+        findWishItemOrThrow(id);
+        wishItemRepository.deleteById(id);
+    }
+
+    public WishItem findWishItemOrThrow(Long id) {
+        return wishItemRepository.findById(id).orElseThrow(WishItemNotFoundException::new);
+    }
 }

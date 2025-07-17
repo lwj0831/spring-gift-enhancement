@@ -10,8 +10,8 @@ public record LoginResponseDto(
     long refreshTokenExpiresInSeconds
 ) {
 
-  public static LoginResponseDto from(TokenResponse res) {
-    return new LoginResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
-        res.refreshToken(), res.refreshTokenExpiresIn());
-  }
+    public static LoginResponseDto from(TokenResponse res) {
+        return new LoginResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
+            res.refreshToken(), res.refreshTokenExpiresIn());
+    }
 }

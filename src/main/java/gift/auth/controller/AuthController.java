@@ -18,35 +18,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-  private final AuthService authService;
+    private final AuthService authService;
 
-  public AuthController(AuthService authService) {
-    this.authService = authService;
-  }
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-  @PostMapping("/register")
-  public ResponseEntity<RegisterMemberResponseDto> registerMember(
-      @RequestBody RegisterMemberRequestDto dto) {
-    RegisterMemberResponseDto responseDto = authService.registerMember(dto);
-    return ResponseEntity.ok(responseDto);
-  }
+    @PostMapping("/register")
+    public ResponseEntity<RegisterMemberResponseDto> registerMember(
+        @RequestBody RegisterMemberRequestDto dto) {
+        RegisterMemberResponseDto responseDto = authService.registerMember(dto);
+        return ResponseEntity.ok(responseDto);
+    }
 
-  @PostMapping("/login")
-  public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-    LoginResponseDto responseDto = authService.login(dto);
-    return ResponseEntity.ok(responseDto);
-  }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
+        LoginResponseDto responseDto = authService.login(dto);
+        return ResponseEntity.ok(responseDto);
+    }
 
-  @PostMapping("/refresh")
-  public ResponseEntity<LoginResponseDto> refreshToken(@RequestBody RefreshTokenRequestDto dto) {
-    LoginResponseDto responseDto = authService.refreshToken(dto);
-    return ResponseEntity.ok(responseDto);
-  }
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponseDto> refreshToken(@RequestBody RefreshTokenRequestDto dto) {
+        LoginResponseDto responseDto = authService.refreshToken(dto);
+        return ResponseEntity.ok(responseDto);
+    }
 
-  @PostMapping("/logout")
-  public ResponseEntity<Void> logout(Authentication authentication) {
-    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-    authService.logout(userDetails.getUsername());
-    return ResponseEntity.noContent().build();
-  }
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        authService.logout(userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

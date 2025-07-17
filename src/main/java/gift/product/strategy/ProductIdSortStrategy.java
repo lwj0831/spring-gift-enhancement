@@ -6,8 +6,8 @@ import java.util.Comparator;
 
 public class ProductIdSortStrategy implements SortStrategy<Product> {
 
-  @Override
-  public Comparator<Product> getComparator() {
-    return Comparator.comparing(Product::id);
-  }
+    @Override
+    public Comparator<Product> getComparator() {
+        return Comparator.comparing(Product::id);
+    }
 }

@@ -9,25 +9,25 @@ import java.util.Map;
 
 public class ProductSortStrategyFactory {
 
-  private static final Map<String, SortStrategy<Product>> strategyMap = Map.of(
-      "id", new ProductIdSortStrategy(),
-      "name", new ProductNameSortStrategy(),
-      "price", new ProductPriceSortStrategy()
-  );
+    private static final Map<String, SortStrategy<Product>> strategyMap = Map.of(
+        "id", new ProductIdSortStrategy(),
+        "name", new ProductNameSortStrategy(),
+        "price", new ProductPriceSortStrategy()
+    );
 
-  private static SortStrategy<Product> getStrategy(String sortField)
-      throws InvalidProductSortFieldException {
-    return strategyMap.get(sortField);
-  }
+    private static SortStrategy<Product> getStrategy(String sortField)
+        throws InvalidProductSortFieldException {
+        return strategyMap.get(sortField);
+    }
 
-  public static Comparator<Product> getComparator(SortInfo sortInfo) {
-    String sortField = sortInfo.field();
-    boolean isAscending = sortInfo.isAscending();
+    public static Comparator<Product> getComparator(SortInfo sortInfo) {
+        String sortField = sortInfo.field();
+        boolean isAscending = sortInfo.isAscending();
 
-    SortStrategy<Product> sortStrategy = ProductSortStrategyFactory.getStrategy(sortField);
+        SortStrategy<Product> sortStrategy = ProductSortStrategyFactory.getStrategy(sortField);
 
-    return isAscending ?
-        sortStrategy.getComparator() :
-        sortStrategy.getComparator().reversed();
-  }
+        return isAscending ?
+            sortStrategy.getComparator() :
+            sortStrategy.getComparator().reversed();
+    }
 }

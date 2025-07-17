@@ -10,16 +10,16 @@ import gift.wishlist.domain.WishItem;
 
 public class WishItemMapper {
 
-  public static WishItem toDomain(WishItemEntity entity) {
-    Member member = MemberMapper.toDomain(entity.getMember());
-    Product product = ProductMapper.toDomain(entity.getProduct());
-    return WishItem.withId(entity.getId(), member, product);
-  }
+    public static WishItem toDomain(WishItemEntity entity) {
+        Member member = MemberMapper.toDomain(entity.getMember());
+        Product product = ProductMapper.toDomain(entity.getProduct());
+        return WishItem.withId(entity.getId(), member, product);
+    }
 
-  public static WishItemEntity toEntity(WishItem wishItem) {
-    MemberEntity memberEntity = MemberMapper.toEntity(wishItem.member());
-    ProductEntity productEntity = ProductMapper.toEntity(wishItem.product());
-    return new WishItemEntity(wishItem.id(), memberEntity, productEntity);
-  }
+    public static WishItemEntity toEntity(WishItem wishItem) {
+        MemberEntity memberEntity = MemberMapper.toEntity(wishItem.member());
+        ProductEntity productEntity = ProductMapper.toEntity(wishItem.product());
+        return new WishItemEntity(wishItem.id(), memberEntity, productEntity);
+    }
 
 }
