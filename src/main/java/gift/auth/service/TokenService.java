@@ -1,36 +1,41 @@
 package gift.auth.service;
 
 import gift.auth.domain.JwtUtils;
-import gift.auth.domain.TokenResponse;
-import gift.auth.repository.MemberAuthRepository;
+import gift.auth.domain.MemberAuth;
+import gift.auth.domain.TokenInfo;
+import gift.auth.repository.MemberAuthJpaRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class TokenService {
 
     private final JwtUtils jwtUtils;
-    private final MemberAuthRepository memberAuthRepository;
+    private final MemberAuthJpaRepository memberAuthRepository;
     private static final String AUTHORIZATION = "Authorization";
     private static final String TOKEN_TYPE_BEARER = "bearer";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    public TokenService(JwtUtils jwtUtils, MemberAuthRepository memberAuthRepository) {
+    public TokenService(JwtUtils jwtUtils, MemberAuthJpaRepository memberAuthRepository) {
         this.jwtUtils = jwtUtils;
         this.memberAuthRepository = memberAuthRepository;
     }
 
-    public TokenResponse generateBearerTokenResponse(Long memberId, String email) {
+    @Transactional
+    public TokenInfo generateBearerTokenInfo(Long memberId, String email) {
         String accessToken = jwtUtils.createToken(memberId, email, List.of());
         String refreshToken = jwtUtils.createRefreshToken(memberId);
 
-        memberAuthRepository.updateRefreshToken(memberId, refreshToken);
+        MemberAuth memberAuth = memberAuthRepository.findById(memberId)
+            .orElseThrow(IllegalArgumentException::new);
+        memberAuth.updateRefreshToken(refreshToken);
 
         long accessTokenExpiresIn = jwtUtils.getAccessTokenExpirationTime();
         long refreshTokenExpiresIn = jwtUtils.getRefreshTokenExpirationTime();
 
-        return new TokenResponse(TOKEN_TYPE_BEARER, accessToken, accessTokenExpiresIn, refreshToken,
+        return new TokenInfo(TOKEN_TYPE_BEARER, accessToken, accessTokenExpiresIn, refreshToken,
             refreshTokenExpiresIn);
     }
 
