@@ -1,10 +1,10 @@
 package gift.product.exception;
 
-import gift.global.exception.BusinessException;
+import gift.global.exception.DomainNotFoundException;
 
-public class ProductNotFoundException extends BusinessException {
+public class ProductNotFoundException extends DomainNotFoundException {
 
-  public ProductNotFoundException() {
-    super(ProductErrorCode.PRODUCT_NOT_FOUND);
-  }
+    public ProductNotFoundException(Long id) {
+        super(ProductErrorCode.PRODUCT_NOT_FOUND, id);
+    }
 }

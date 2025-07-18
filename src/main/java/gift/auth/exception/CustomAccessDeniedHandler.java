@@ -16,25 +16,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-  private final ObjectMapper objectMapper;
-  private static final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+    private final ObjectMapper objectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
 
-  public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
+    public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
-  @Override
-  public void handle(HttpServletRequest request, HttpServletResponse response,
-      AccessDeniedException accessDeniedException) throws IOException {
-    logger.error("Authorization exception occurs: {}", accessDeniedException.getMessage(),
-        accessDeniedException);
-    ErrorResponse errorResponse = ErrorResponse.from(AuthErrorCode.FORBIDDEN);
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+        AccessDeniedException accessDeniedException) throws IOException {
+        logger.error("Authorization exception occurs: {}", accessDeniedException.getMessage(),
+            accessDeniedException);
+        ErrorResponse errorResponse = ErrorResponse.from(AuthErrorCode.FORBIDDEN);
 
-    response.setStatus(HttpStatus.FORBIDDEN.value());
-    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
-    String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-    response.getWriter().write(jsonResponse);
-  }
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+        response.getWriter().write(jsonResponse);
+    }
 }

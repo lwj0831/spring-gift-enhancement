@@ -1,8 +1,8 @@
 package gift.product.controller;
 
 import gift.global.common.annotation.PageParam;
-import gift.global.common.dto.PageRequest;
-import gift.global.common.dto.PagedResult;
+import gift.global.common.dto.PageRequestDto;
+import gift.global.common.dto.PageResponseDto;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.GetProductResponseDto;
 import gift.product.dto.UpdateProductRequestDto;
@@ -23,45 +23,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 public class ProductController {
 
-  private final ProductService productService;
+    private final ProductService productService;
 
-  public ProductController(ProductService productService) {
-    this.productService = productService;
-  }
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
-  @GetMapping("/{productId}")
-  public ResponseEntity<GetProductResponseDto> getProductById(
-      @PathVariable(name = "productId") Long productId) {
-    GetProductResponseDto responseDto = productService.getProductById(productId);
-    return ResponseEntity.ok(responseDto);
-  }
+    @GetMapping("/{productId}")
+    public ResponseEntity<GetProductResponseDto> getProductById(
+        @PathVariable(name = "productId") Long productId) {
+        GetProductResponseDto responseDto = productService.getProductById(productId);
+        return ResponseEntity.ok(responseDto);
+    }
 
-  @GetMapping
-  public ResponseEntity<PagedResult<GetProductResponseDto>> getProductByPageRequest(
-      @Valid @PageParam PageRequest pageRequest
-  ) {
-    PagedResult<GetProductResponseDto> pagedResult = productService.getAllByPage(pageRequest);
-    return ResponseEntity.ok(pagedResult);
-  }
+    @GetMapping
+    public ResponseEntity<PageResponseDto<GetProductResponseDto>> getProductByPageRequest(
+        @Valid @PageParam PageRequestDto pageRequestDto
+    ) {
+        PageResponseDto<GetProductResponseDto> pageResponseDto = productService.getAllByPage(
+            pageRequestDto);
+        return ResponseEntity.ok(pageResponseDto);
+    }
 
-  @PostMapping
-  public ResponseEntity<Void> createProduct(@Valid @RequestBody CreateProductRequestDto dto) {
-    Long id = productService.createProduct(dto);
-    URI uri = URI.create("/api/products/" + id);
-    return ResponseEntity.created(uri).build();
-  }
+    @PostMapping
+    public ResponseEntity<Void> createProduct(@Valid @RequestBody CreateProductRequestDto dto) {
+        Long id = productService.createProduct(dto);
+        URI uri = URI.create("/api/products/" + id);
+        return ResponseEntity.created(uri).build();
+    }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<Void> updateProduct(@PathVariable(name = "id") Long id,
-      @Valid @RequestBody UpdateProductRequestDto dto) {
-    productService.updateProduct(id, dto);
-    return ResponseEntity.noContent().build();
-  }
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateProduct(@PathVariable(name = "id") Long id,
+        @Valid @RequestBody UpdateProductRequestDto dto) {
+        productService.updateProduct(id, dto);
+        return ResponseEntity.noContent().build();
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable(name = "id") Long id) {
-    productService.deleteProduct(id);
-    return ResponseEntity.noContent().build();
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable(name = "id") Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

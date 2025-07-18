@@ -4,8 +4,8 @@ import gift.global.exception.BusinessException;
 
 public class ExpiredTokenException extends BusinessException {
 
-  public ExpiredTokenException() {
-    super(AuthErrorCode.EXPIRED_TOKEN);
-  }
+    public ExpiredTokenException() {
+        super(AuthErrorCode.EXPIRED_TOKEN);
+    }
 
 }

@@ -18,38 +18,39 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-  private final ObjectMapper objectMapper;
-  private static final Logger logger = LoggerFactory.getLogger(
-      CustomAuthenticationEntryPoint.class);
+    private final ObjectMapper objectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(
+        CustomAuthenticationEntryPoint.class);
 
-  public CustomAuthenticationEntryPoint(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
-
-  @Override
-  public void commence(HttpServletRequest request, HttpServletResponse response,
-      AuthenticationException authException) throws IOException {
-    logger.error("AuthenticationException occurs: {}", authException.getMessage(), authException);
-    ErrorResponse errorResponse = determineErrorResponse(authException);
-
-    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    response.setCharacterEncoding("UTF-8");
-
-    String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-    response.getWriter().write(jsonResponse);
-  }
-
-  private ErrorResponse determineErrorResponse(AuthenticationException authException) {
-    if (authException instanceof BadCredentialsException) {
-      return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED, "잘못된 인증 정보입니다");
-    } else if (authException instanceof InsufficientAuthenticationException) {
-      return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED, "인증 정보가 부족합니다");
-    } else if (authException.getMessage().contains("expired")) {
-      return ErrorResponse.from(AuthErrorCode.EXPIRED_TOKEN);
-    } else if (authException.getMessage().contains("invalid")) {
-      return ErrorResponse.from(AuthErrorCode.INVALID_TOKEN);
+    public CustomAuthenticationEntryPoint(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
-    return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED);
-  }
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+        AuthenticationException authException) throws IOException {
+        logger.error("AuthenticationException occurs: {}", authException.getMessage(),
+            authException);
+        ErrorResponse errorResponse = determineErrorResponse(authException);
+
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+        response.getWriter().write(jsonResponse);
+    }
+
+    private ErrorResponse determineErrorResponse(AuthenticationException authException) {
+        if (authException instanceof BadCredentialsException) {
+            return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED, "잘못된 인증 정보입니다");
+        } else if (authException instanceof InsufficientAuthenticationException) {
+            return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED, "인증 정보가 부족합니다");
+        } else if (authException.getMessage().contains("expired")) {
+            return ErrorResponse.from(AuthErrorCode.EXPIRED_TOKEN);
+        } else if (authException.getMessage().contains("invalid")) {
+            return ErrorResponse.from(AuthErrorCode.INVALID_TOKEN);
+        }
+        return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED);
+    }
 }

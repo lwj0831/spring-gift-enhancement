@@ -1,10 +1,10 @@
 package gift.wishlist.exception;
 
-import gift.global.exception.BusinessException;
+import gift.global.exception.DomainNotFoundException;
 
-public class WishItemNotFoundException extends BusinessException {
+public class WishItemNotFoundException extends DomainNotFoundException {
 
-  public WishItemNotFoundException() {
-    super(WishItemErrorCode.WISH_ITEM_NOT_FOUND);
-  }
+    public WishItemNotFoundException(Long id) {
+        super(WishItemErrorCode.WISH_ITEM_NOT_FOUND, id);
+    }
 }

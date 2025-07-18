@@ -1,76 +1,80 @@
 package gift.product.service;
 
-import gift.global.common.dto.PageRequest;
-import gift.global.common.dto.PagedResult;
+import gift.global.common.dto.PageRequestDto;
+import gift.global.common.dto.PageResponseDto;
 import gift.product.domain.Product;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.GetProductResponseDto;
 import gift.product.dto.UpdateProductRequestDto;
 import gift.product.exception.ProductNotFoundException;
-import gift.product.repository.ProductRepository;
+import gift.product.repository.ProductJpaRepository;
 import gift.product.validation.ProductValidator;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class ProductService {
 
-  private final ProductRepository productRepository;
-  private final ProductValidator productValidator;
+    private final ProductJpaRepository productRepository;
+    private final ProductValidator productValidator;
 
-  public ProductService(ProductRepository productRepository, ProductValidator productValidator) {
-    this.productRepository = productRepository;
-    this.productValidator = productValidator;
-  }
+    public ProductService(ProductJpaRepository productRepository,
+        ProductValidator productValidator) {
+        this.productRepository = productRepository;
+        this.productValidator = productValidator;
+    }
 
-  public PagedResult<GetProductResponseDto> getAllByPage(PageRequest pageRequest)
-      throws IllegalArgumentException {
-    List<Product> pagedProductList = productRepository.findAllByPage(pageRequest.offset(),
-        pageRequest.pageSize(), pageRequest.sortInfo());
-    return PagedResult.of(pagedProductList, pageRequest.offset(), pageRequest.pageSize())
-        .map(GetProductResponseDto::from);
-  }
+    @Transactional(readOnly = true)
+    public PageResponseDto<GetProductResponseDto> getAllByPage(PageRequestDto pageRequestDto)
+        throws IllegalArgumentException {
+        productValidator.validateProductSortField(pageRequestDto.sortInfo().sortField());
 
-  public GetProductResponseDto getProductById(Long id) throws ProductNotFoundException {
-    Product product = findProductOrThrow(id);
-    return GetProductResponseDto.from(product);
-  }
+        Page<Product> pagedProduct = productRepository.findAll(pageRequestDto.toPageable());
+        Page<GetProductResponseDto> pagedDto = pagedProduct.map(GetProductResponseDto::from);
+        return PageResponseDto.from(pagedDto);
+    }
 
-  @Transactional
-  public Long createProduct(CreateProductRequestDto dto) {
-    productValidator.validateProductName(dto.name());
-    Product newProduct = Product.of(
-        dto.name(),
-        dto.price(),
-        dto.description(),
-        dto.imageUrl()
-    );
-    return productRepository.save(newProduct);
-  }
+    @Transactional(readOnly = true)
+    public GetProductResponseDto getProductById(Long id) throws ProductNotFoundException {
+        Product product = findProductOrThrow(id);
 
-  @Transactional
-  public void updateProduct(Long id, UpdateProductRequestDto dto) throws ProductNotFoundException {
-    productValidator.validateProductName(dto.name());
-    findProductOrThrow(id);
-    Product newProduct = Product.withId(
-        id,
-        dto.name(),
-        dto.price(),
-        dto.description(),
-        dto.imageUrl()
-    );
-    productRepository.update(id, newProduct);
-  }
+        return GetProductResponseDto.from(product);
+    }
 
-  @Transactional
-  public void deleteProduct(Long id) throws ProductNotFoundException {
-    findProductOrThrow(id);
-    productRepository.deleteById(id);
-  }
+    @Transactional
+    public Long createProduct(CreateProductRequestDto dto) {
+        productValidator.validateProductName(dto.name());
 
-  public Product findProductOrThrow(Long productId) {
-    return productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-  }
+        Product newProduct = Product.of(
+            dto.name(),
+            dto.price(),
+            dto.description(),
+            dto.imageUrl()
+        );
+
+        return productRepository.save(newProduct).getId();
+    }
+
+    @Transactional
+    public void updateProduct(Long id, UpdateProductRequestDto dto)
+        throws ProductNotFoundException {
+        productValidator.validateProductName(dto.name());
+
+        Product foundProduct = findProductOrThrow(id);
+        foundProduct.update(dto.name(), dto.price(), dto.description(), dto.imageUrl());
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        findProductOrThrow(id);
+
+        productRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Product findProductOrThrow(Long productId) {
+        return productRepository.findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(productId));
+    }
 }

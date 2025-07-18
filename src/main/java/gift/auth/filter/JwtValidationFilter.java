@@ -16,33 +16,33 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtValidationFilter extends OncePerRequestFilter {
 
-  private final UserDetailsService userDetailsService;
-  private final TokenService tokenService;
+    private final UserDetailsService userDetailsService;
+    private final TokenService tokenService;
 
-  public JwtValidationFilter(UserDetailsService userDetailsService,
-      TokenService tokenService) {
-    this.userDetailsService = userDetailsService;
-    this.tokenService = tokenService;
-  }
-
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain)
-      throws ServletException, IOException {
-
-    String token = tokenService.resolveToken(request);
-
-    if (token != null && tokenService.isValidToken(token)) {
-      String email = tokenService.getEmail(token);
-      UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-      UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-          userDetails, null, null);
-
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+    public JwtValidationFilter(UserDetailsService userDetailsService,
+        TokenService tokenService) {
+        this.userDetailsService = userDetailsService;
+        this.tokenService = tokenService;
     }
 
-    filterChain.doFilter(request, response);
-  }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+        FilterChain filterChain)
+        throws ServletException, IOException {
+
+        String token = tokenService.resolveToken(request);
+
+        if (token != null && tokenService.isValidToken(token)) {
+            String email = tokenService.getEmail(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, null);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        filterChain.doFilter(request, response);
+    }
 
 }

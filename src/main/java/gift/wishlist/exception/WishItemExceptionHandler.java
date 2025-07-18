@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class WishItemExceptionHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(ProductExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductExceptionHandler.class);
 
-  @ExceptionHandler(WishItemNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleWishItemNotFoundException(
-      WishItemNotFoundException exception) {
-    logger.error("WishItem not found: {}", exception.getMessage(), exception);
-    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
-  }
+    @ExceptionHandler(WishItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWishItemNotFoundException(
+        WishItemNotFoundException exception) {
+        logger.error("WishItem not found: {}", exception.getMessage(), exception);
+        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+    }
 
-  @ExceptionHandler(WishItemAlreadyExistsException.class)
-  public ResponseEntity<ErrorResponse> handleWishItemAlreadyExistsException(
-      WishItemAlreadyExistsException exception) {
-    logger.error("WishItem already exists: {}", exception.getMessage(), exception);
-    return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
-  }
+    @ExceptionHandler(WishItemAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleWishItemAlreadyExistsException(
+        WishItemAlreadyExistsException exception) {
+        logger.error("WishItem already exists: {}", exception.getMessage(), exception);
+        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+    }
 
 }

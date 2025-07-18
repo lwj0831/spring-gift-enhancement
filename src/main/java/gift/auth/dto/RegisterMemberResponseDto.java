@@ -1,6 +1,6 @@
 package gift.auth.dto;
 
-import gift.auth.domain.TokenResponse;
+import gift.auth.domain.TokenInfo;
 
 public record RegisterMemberResponseDto(
     String tokenType,
@@ -11,9 +11,9 @@ public record RegisterMemberResponseDto(
     Long memberId
 ) {
 
-  public static RegisterMemberResponseDto from(TokenResponse res, Long memberId) {
-    return new RegisterMemberResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
-        res.refreshToken(), res.refreshTokenExpiresIn(), memberId);
-  }
+    public static RegisterMemberResponseDto from(TokenInfo res, Long memberId) {
+        return new RegisterMemberResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
+            res.refreshToken(), res.refreshTokenExpiresIn(), memberId);
+    }
 
 }

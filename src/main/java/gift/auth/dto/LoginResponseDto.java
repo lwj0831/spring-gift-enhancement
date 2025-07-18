@@ -1,6 +1,6 @@
 package gift.auth.dto;
 
-import gift.auth.domain.TokenResponse;
+import gift.auth.domain.TokenInfo;
 
 public record LoginResponseDto(
     String tokenType,
@@ -10,8 +10,8 @@ public record LoginResponseDto(
     long refreshTokenExpiresInSeconds
 ) {
 
-  public static LoginResponseDto from(TokenResponse res) {
-    return new LoginResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
-        res.refreshToken(), res.refreshTokenExpiresIn());
-  }
+    public static LoginResponseDto from(TokenInfo res) {
+        return new LoginResponseDto(res.tokenType(), res.accessToken(), res.expiresIn(),
+            res.refreshToken(), res.refreshTokenExpiresIn());
+    }
 }

@@ -1,4 +1,4 @@
-package gift.product.dto;
+package gift.wishlist.dto;
 
 public record SimpleWishItemDto(
     Long productId,

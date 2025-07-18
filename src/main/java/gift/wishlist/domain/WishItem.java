@@ -1,28 +1,54 @@
 package gift.wishlist.domain;
 
-public record WishItem(
-    Long id,
-    Long memberId,
-    Long productId
-) {
+import gift.member.domain.Member;
+import gift.product.domain.Product;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
-  public WishItem {
-    validateId(memberId);
-    validateId(productId);
-  }
+@Entity
+@Table(name = "wish_item")
+public class WishItem {
 
-  public static WishItem of(Long memberId, Long productId) {
-    return new WishItem(null, memberId, productId);
-  }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  public static WishItem withId(Long id, Long memberId, Long productId) {
-    return new WishItem(id, memberId, productId);
-  }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-  private void validateId(Long id) {
-    if (id == null || id < 0) {
-      throw new IllegalArgumentException("id는 null이거나 음수일 수 없습니다,");
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    protected WishItem() {
     }
-  }
 
+    private WishItem(Long id, Member member, Product product) {
+        this.id = id;
+        this.member = member;
+        this.product = product;
+    }
+
+    public static WishItem of(Member member, Product product) {
+        return new WishItem(null, member, product);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
 }
