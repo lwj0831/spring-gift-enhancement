@@ -1,5 +1,6 @@
 package gift.auth.domain;
 
+import gift.global.common.jpa.TimeBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,7 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "member_auth")
-public class MemberAuth {
+public class MemberAuth extends TimeBaseEntity {
 
     @Id
     private Long id;
