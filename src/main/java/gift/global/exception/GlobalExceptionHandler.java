@@ -34,7 +34,6 @@ public class GlobalExceptionHandler {
         Map<String, Object> additionalInfo = Map.of("invalid-params", invalidParams);
 
         return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
-            exception,
             additionalInfo);
     }
 
@@ -55,7 +54,6 @@ public class GlobalExceptionHandler {
         Map<String, Object> additionalInfo = Map.of("invalid-params", invalidParams);
 
         return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
-            exception,
             additionalInfo);
     }
 
@@ -64,7 +62,6 @@ public class GlobalExceptionHandler {
         IllegalArgumentException exception) {
         logger.error("IllegalArgumentException occurred: {}", exception.getMessage(), exception);
 
-        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
-            exception);
+        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR);
     }
 }

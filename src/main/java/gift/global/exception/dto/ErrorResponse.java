@@ -26,4 +26,9 @@ public record ErrorResponse(
         return new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage(), extras);
     }
 
+    public static ErrorResponse from(ErrorCode errorCode, String errorMessage,
+        Map<String, Object> extras) {
+        return new ErrorResponse(errorCode.getErrorCode(), errorMessage, extras);
+    }
+
 }

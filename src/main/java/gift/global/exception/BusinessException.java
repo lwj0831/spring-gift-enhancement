@@ -1,10 +1,11 @@
 package gift.global.exception;
 
-public class BusinessException extends RuntimeException {
+public abstract class BusinessException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
     public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
     }
 
