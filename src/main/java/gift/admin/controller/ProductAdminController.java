@@ -1,12 +1,12 @@
 package gift.admin.controller;
 
-import gift.global.common.annotation.PageParam;
-import gift.global.common.dto.PageRequestDto;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.UpdateProductRequestDto;
 import gift.product.exception.ProductNotFoundException;
 import gift.product.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,9 +28,9 @@ public class ProductAdminController {
     }
 
     @GetMapping
-    public String listProducts(@PageParam PageRequestDto pageRequestDto, Model model) {
+    public String listProducts(@PageableDefault Pageable pageable, Model model) {
         try {
-            var result = productService.getAllByPage(pageRequestDto);
+            var result = productService.getAllByPage(pageable);
             model.addAttribute("products", result.content());
             return "product-list";
         } catch (Exception e) {
