@@ -2,7 +2,8 @@ name: Run Tests
 
 on:
   push:
-    branches: [lwj0831]
+    branches:
+      - 'step*'
 
 jobs:
   test:
