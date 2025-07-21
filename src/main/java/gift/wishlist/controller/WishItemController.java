@@ -48,8 +48,9 @@ public class WishItemController {
     }
 
     @DeleteMapping("/{wishItemId}")
-    public ResponseEntity<Void> deleteWishItem(@PathVariable(name = "wishItemId") Long id) {
-        wishItemService.deleteWishItem(id);
+    public ResponseEntity<Void> deleteWishItem(@LoginUser Long memberId,
+        @PathVariable(name = "wishItemId") Long wishItemId) {
+        wishItemService.deleteWishItem(memberId, wishItemId);
         return ResponseEntity.noContent().build();
     }
 

@@ -1,5 +1,6 @@
 package gift.wishlist.service;
 
+import gift.auth.exception.ForbiddenException;
 import gift.global.common.dto.PageResponseDto;
 import gift.member.domain.Member;
 import gift.member.service.MemberService;
@@ -54,10 +55,13 @@ public class WishItemService {
     }
 
     @Transactional
-    public void deleteWishItem(Long id) {
-        findWishItemOrThrow(id);
+    public void deleteWishItem(Long memberId, Long wishItemId) {
+        WishItem wishItem = findWishItemOrThrow(wishItemId);
 
-        wishItemRepository.deleteById(id);
+        if (!memberId.equals(wishItem.getMember().getId())) {
+            throw new ForbiddenException();
+        }
+        wishItemRepository.deleteById(wishItemId);
     }
 
     @Transactional(readOnly = true)
