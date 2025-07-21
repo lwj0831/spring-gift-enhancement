@@ -49,13 +49,13 @@ VALUES (100, 110);
 INSERT INTO product_option (id, name, quantity, product_id)
 VALUES (100, "옵션명1", 100, 100);
 INSERT INTO product_option (id, name, quantity, product_id)
-VALUES (101, "옵션명1", 200, 100);
+VALUES (101, "옵션명2", 200, 100);
 INSERT INTO product_option (id, name, quantity, product_id)
-VALUES (102, "옵션명1", 300, 100);
+VALUES (102, "옵션명3", 300, 100);
 INSERT INTO product_option (id, name, quantity, product_id)
-VALUES (103, "옵션명1", 400, 100);
+VALUES (103, "옵션명4", 400, 100);
 INSERT INTO product_option (id, name, quantity, product_id)
-VALUES (104, "옵션명1", 500, 100);
+VALUES (104, "옵션명5", 500, 100);
 
 
 

@@ -8,9 +8,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "product_option")
+@Table(
+    name = "product_option",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uk_product_option_product_id_name",
+        columnNames = {"product_id", "name"}
+    )
+)
 public class ProductOption {
 
     @Id
