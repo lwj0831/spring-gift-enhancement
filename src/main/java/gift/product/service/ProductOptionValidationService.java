@@ -14,7 +14,7 @@ public class ProductOptionValidationService {
     }
 
     public void validateOptionNameUniqueness(Long productId, String optionName) {
-        if (!productOptionRepository.existsByProductIdAndName(productId, optionName)) {
+        if (productOptionRepository.existsByProductIdAndName(productId, optionName)) {
             throw new DuplicateProductOptionNameException(optionName);
         }
     }
