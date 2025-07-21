@@ -41,7 +41,7 @@ public class ProductAdminController {
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
-        model.addAttribute("product", new CreateProductRequestDto(null, null, null, null));
+        model.addAttribute("product", new CreateProductRequestDto(null, null, null, null, null));
         return "product-add";
     }
 
