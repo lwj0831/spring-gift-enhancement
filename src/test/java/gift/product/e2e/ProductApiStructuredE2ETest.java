@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.global.exception.dto.ErrorResponse;
+import gift.product.dto.CreateProductOptionRequestDto;
 import gift.product.dto.CreateProductRequestDto;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +39,7 @@ class ProductApiStructuredE2ETest {
     @Test
     void 상품등록_빈_이름으로_요청시_400_응답반환() throws Exception {
         var request = new CreateProductRequestDto("   ", 1000, "설명입니다",
-            "https://example.com/image.jpg");
+            "https://example.com/image.jpg", createValidOptions());
 
         var response = createProductWithErrorResponse(request);
         ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +61,7 @@ class ProductApiStructuredE2ETest {
     @Test
     void 상품등록_카카오포함된_이름으로_요청시_400_응답반환() throws Exception {
         var request = new CreateProductRequestDto("카카오 초콜릿", 1000, "설명입니다",
-            "https://example.com/image.jpg");
+            "https://example.com/image.jpg", createValidOptions());
 
         var response = createProductWithErrorResponse(request);
         ObjectMapper mapper = new ObjectMapper();
@@ -68,13 +69,12 @@ class ProductApiStructuredE2ETest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(errorResponse.errorCode()).isEqualTo("PRODUCT-002");
-
     }
 
     @Test
     void 상품등록_유효하지않은_가격으로_요청시_400_응답반환() throws Exception {
         var request = new CreateProductRequestDto("상품이름", -10, "설명입니다",
-            "https://example.com/image.jpg");
+            "https://example.com/image.jpg", createValidOptions());
 
         var response = createProductWithErrorResponse(request);
         ObjectMapper mapper = new ObjectMapper();
@@ -94,6 +94,28 @@ class ProductApiStructuredE2ETest {
     }
 
     @Test
+    void 상품등록_옵션_없을경우_400_반환() throws Exception {
+        var request = new CreateProductRequestDto("정상상품", 1000, "설명입니다",
+            "https://example.com/image.jpg", List.of());
+
+        var response = createProductWithErrorResponse(request);
+        ObjectMapper mapper = new ObjectMapper();
+        ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(errorResponse.errorCode()).isEqualTo("GLOBAL-001");
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, String>> invalidParams = (List<Map<String, String>>) errorResponse.extras()
+            .get("invalid-params");
+
+        assertThat(invalidParams).anySatisfy(param -> {
+            assertThat(param.get("name")).isEqualTo("options");
+            assertThat(param.get("reason")).contains("상품은 하나 이상의 옵션을 가져야 합니다");
+        });
+    }
+
+    @Test
     void 상품리스트조회_잘못된_정렬필드_400_반환() throws Exception {
         var response = restClient.get()
             .uri("/api/products?page=0&size=10&sort=nonExistentField,asc")
@@ -108,16 +130,20 @@ class ProductApiStructuredE2ETest {
 
         assertAll(() -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
             () -> assertThat(errorResponse.errorCode()).isEqualTo("PRODUCT-003"),
-            () -> assertThat(errorResponse.errorMessage()).contains("상품 페이징 정렬 필드 값이 올바르지 않습니다"));
+            () -> assertThat(errorResponse.errorMessage()).contains("다음 정렬 필드는 허용되지 않습니다"));
     }
 
+    private List<CreateProductOptionRequestDto> createValidOptions() {
+        return List.of(new CreateProductOptionRequestDto("옵션1", 100));
+    }
 
     private CreateProductRequestDto createValidProductRequest() {
         return new CreateProductRequestDto(
             "정상상품",
             1000,
             "정상적인 설명입니다.",
-            "https://example.com/image.jpg"
+            "https://example.com/image.jpg",
+            createValidOptions()
         );
     }
 
@@ -141,16 +167,6 @@ class ProductApiStructuredE2ETest {
             });
     }
 
-    private ResponseEntity<String> getProductsWithErrorResponse(String queryParams) {
-        return restClient.get()
-            .uri("/api/products" + queryParams)
-            .exchange((req, res) -> {
-                var body = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
-                return ResponseEntity.status(res.getStatusCode()).headers(res.getHeaders())
-                    .body(body);
-            });
-    }
-
     private Long createTestProduct() {
         var request = createValidProductRequest();
         var response = createProduct(request);
@@ -159,4 +175,3 @@ class ProductApiStructuredE2ETest {
         return Long.valueOf(location.getPath().substring(location.getPath().lastIndexOf("/") + 1));
     }
 }
-
