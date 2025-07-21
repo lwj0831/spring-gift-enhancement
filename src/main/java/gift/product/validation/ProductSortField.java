@@ -2,7 +2,6 @@ package gift.product.validation;
 
 import gift.product.exception.InvalidProductSortFieldException;
 import java.util.Arrays;
-import java.util.List;
 
 public enum ProductSortField {
     ID("id"),
@@ -19,7 +18,7 @@ public enum ProductSortField {
         return fieldName;
     }
 
-    public static ProductSortField fromString(String fieldName) {
+    public static ProductSortField from(String fieldName) {
         return Arrays.stream(ProductSortField.values())
             .filter(field -> field.fieldName.equalsIgnoreCase(fieldName))
             .findFirst()
@@ -32,9 +31,4 @@ public enum ProductSortField {
             .anyMatch(fieldName::equalsIgnoreCase);
     }
 
-    public static List<String> getValidFieldNames() {
-        return Arrays.stream(values())
-            .map(ProductSortField::getFieldName)
-            .toList();
-    }
 }
