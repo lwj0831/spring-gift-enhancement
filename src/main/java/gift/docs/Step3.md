@@ -18,8 +18,9 @@
 ### 📌 2. 개발/테스트 환경별 DB 구성
 
 - [x] JPA Repository 구조는 고정
-- [x] `default` : 별도 설정 없음 (명시적으로 사용하지 않음)
-- [x] `test` : **H2 + JPA (In-memory)**
+- [x] `default` : 리뷰어 실행환경 - **H2(In-memory)** (명시적으로 사용하지 않음)
+- [x] `dev` : 개발환경 - **MYSQL**
+- [x] `test` : 테스트환경 - **H2(In-memory)** (E2E테스트 시 시큐리티 인증 필터 무효화)
 
 ---
 
