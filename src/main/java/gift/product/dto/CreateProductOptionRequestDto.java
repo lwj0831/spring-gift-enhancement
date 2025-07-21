@@ -16,9 +16,9 @@ public record CreateProductOptionRequestDto(
     String name,
 
     @Min(1)
-    @Max(99_999_9998)
+    @Max(99_999_999)
     @NotNull
     int quantity
 ) {
-    
+
 }
