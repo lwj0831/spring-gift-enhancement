@@ -2,6 +2,7 @@ package gift.product.service;
 
 import gift.global.common.dto.PageResponseDto;
 import gift.product.domain.Product;
+import gift.product.domain.ProductOption;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.GetProductResponseDto;
 import gift.product.dto.UpdateProductRequestDto;
@@ -58,6 +59,13 @@ public class ProductService {
             dto.description(),
             dto.imageUrl()
         );
+
+        dto.options()
+            .forEach((optionDto) -> {
+                ProductOption option = ProductOption.of(optionDto.name(), optionDto.quantity(),
+                    newProduct);
+                newProduct.addOption(option);
+            });
 
         return productRepository.save(newProduct).getId();
     }
