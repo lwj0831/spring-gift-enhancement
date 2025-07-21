@@ -2,6 +2,7 @@ package gift.product.exception;
 
 import gift.global.exception.ErrorResponseFactory;
 import gift.global.exception.dto.ErrorResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,16 @@ public class ProductExceptionHandler {
     public ResponseEntity<ErrorResponse> handleProductNotFoundException(
         ProductNotFoundException exception) {
         logger.error("Product not found: {}", exception.getMessage());
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+        Map<String, Object> additionalInfo = Map.of("id", exception.getNotFoundId());
+        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(), additionalInfo);
     }
 
     @ExceptionHandler(InvalidProductNameException.class)
     public ResponseEntity<ErrorResponse> handleInvalidProductNameException(
         InvalidProductNameException exception) {
         logger.error("Invalid product name: {}", exception.getMessage());
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(), exception);
+        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(),
+            exception.getMessage());
     }
 
     @ExceptionHandler(InvalidProductSortFieldException.class)

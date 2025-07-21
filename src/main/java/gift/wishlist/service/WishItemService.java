@@ -1,5 +1,6 @@
 package gift.wishlist.service;
 
+import gift.global.common.dto.PageResponseDto;
 import gift.member.domain.Member;
 import gift.member.service.MemberService;
 import gift.product.domain.Product;
@@ -10,7 +11,8 @@ import gift.wishlist.dto.RegisterWishItemRequestDto;
 import gift.wishlist.exception.WishItemAlreadyExistsException;
 import gift.wishlist.exception.WishItemNotFoundException;
 import gift.wishlist.repository.WishItemJpaRepository;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +44,13 @@ public class WishItemService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetWishItemResponseDto> findWishItems(Long memberId) {
+    public PageResponseDto<GetWishItemResponseDto> findWishItemsByPage(Long memberId,
+        Pageable pageable) {
         memberService.findMemberOrThrow(memberId);
 
-        return wishItemRepository.findAllWithProductByMemberId(memberId).stream()
-            .map(GetWishItemResponseDto::from)
-            .toList();
+        Page<GetWishItemResponseDto> pagedDto = wishItemRepository.findAllWithProductByMemberId(
+            memberId, pageable).map(GetWishItemResponseDto::from);
+        return PageResponseDto.from(pagedDto);
     }
 
     @Transactional

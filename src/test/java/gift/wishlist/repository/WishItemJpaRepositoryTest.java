@@ -13,9 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @DisplayName("WishItemJpaRepository 테스트")
+@ActiveProfiles("test")
 class WishItemJpaRepositoryTest {
 
     @Autowired
@@ -75,8 +81,8 @@ class WishItemJpaRepositoryTest {
     }
 
     @Test
-    @DisplayName("멤버ID로 상품 정보와 함께 위시아이템 목록을 조회할 수 있다")
-    void findAllWithProductByMemberId() {
+    @DisplayName("멤버ID로 상품 정보와 함께 위시아이템 목록을 페이지네이션으로 조회할 수 있다")
+    void findAllWithProductByMemberId_withPaging() {
         Member member = Member.of("lee");
         Product product1 = Product.of("testProduct", 1000, "description", "image.jpg");
         Product product2 = Product.of("testProduct", 2000, "description", "image.jpg");
@@ -91,7 +97,11 @@ class WishItemJpaRepositoryTest {
         entityManager.persistAndFlush(wishItem1);
         entityManager.persistAndFlush(wishItem2);
 
-        List<WishItem> wishItems = wishItemRepository.findAllWithProductByMemberId(member.getId());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+
+        Page<WishItem> page = wishItemRepository.findAllWithProductByMemberId(member.getId(),
+            pageable);
+        List<WishItem> wishItems = page.getContent();
 
         assertAll(
             () -> assertThat(wishItems).hasSize(2),
@@ -103,11 +113,18 @@ class WishItemJpaRepositoryTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 멤버ID로 조회시 빈 리스트를 반환한다")
-    void findAllWithProductByMemberIdNotFound() {
-        List<WishItem> wishItems = wishItemRepository.findAllWithProductByMemberId(999L);
-        assertThat(wishItems).isEmpty();
+    @DisplayName("존재하지 않는 멤버ID로 조회 시 빈 페이지를 반환한다")
+    void findAllWithProductByMemberIdNotFound_withPaging() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<WishItem> page = wishItemRepository.findAllWithProductByMemberId(999L, pageable);
+
+        assertAll(
+            () -> assertThat(page).isNotNull(),
+            () -> assertThat(page.getContent()).isEmpty(),
+            () -> assertThat(page.getTotalElements()).isZero()
+        );
     }
+
 
     @Test
     @DisplayName("위시아이템을 삭제할 수 있다")

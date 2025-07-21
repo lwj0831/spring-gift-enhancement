@@ -13,14 +13,14 @@ public class ErrorResponseFactory {
     }
 
     public static ResponseEntity<ErrorResponse> createErrorResponse(ErrorCode errorCode,
-        Exception exception) {
+        String message) {
         return ResponseEntity
             .status(errorCode.getStatus())
-            .body(ErrorResponse.from(errorCode, exception.getMessage()));
+            .body(ErrorResponse.from(errorCode, message));
     }
 
-    public static ResponseEntity<ErrorResponse> createErrorResponse(GlobalErrorCode errorCode,
-        Exception exception, Map<String, Object> additionalInfo) {
+    public static ResponseEntity<ErrorResponse> createErrorResponse(ErrorCode errorCode,
+        Map<String, Object> additionalInfo) {
         return ResponseEntity
             .status(errorCode.getStatus())
             .body(ErrorResponse.from(errorCode, additionalInfo));

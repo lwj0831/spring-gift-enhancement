@@ -1,6 +1,5 @@
 package gift.product.service;
 
-import gift.global.common.dto.PageRequestDto;
 import gift.global.common.dto.PageResponseDto;
 import gift.product.domain.Product;
 import gift.product.dto.CreateProductRequestDto;
@@ -9,7 +8,10 @@ import gift.product.dto.UpdateProductRequestDto;
 import gift.product.exception.ProductNotFoundException;
 import gift.product.repository.ProductJpaRepository;
 import gift.product.validation.ProductValidator;
+import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +28,16 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponseDto<GetProductResponseDto> getAllByPage(PageRequestDto pageRequestDto)
+    public PageResponseDto<GetProductResponseDto> getAllByPage(Pageable pageable)
         throws IllegalArgumentException {
-        productValidator.validateProductSortField(pageRequestDto.sortInfo().sortField());
+        List<String> sortFields = pageable.getSort().stream()
+            .map(Sort.Order::getProperty)
+            .toList();
 
-        Page<Product> pagedProduct = productRepository.findAll(pageRequestDto.toPageable());
-        Page<GetProductResponseDto> pagedDto = pagedProduct.map(GetProductResponseDto::from);
+        productValidator.validateProductSortFields(sortFields);
+
+        Page<GetProductResponseDto> pagedDto = productRepository.findAll(pageable)
+            .map(GetProductResponseDto::from);
         return PageResponseDto.from(pagedDto);
     }
 

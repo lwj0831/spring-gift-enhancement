@@ -1,7 +1,5 @@
 package gift.product.controller;
 
-import gift.global.common.annotation.PageParam;
-import gift.global.common.dto.PageRequestDto;
 import gift.global.common.dto.PageResponseDto;
 import gift.product.dto.CreateProductRequestDto;
 import gift.product.dto.GetProductResponseDto;
@@ -9,6 +7,8 @@ import gift.product.dto.UpdateProductRequestDto;
 import gift.product.service.ProductService;
 import jakarta.validation.Valid;
 import java.net.URI;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,10 +38,10 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<PageResponseDto<GetProductResponseDto>> getProductByPageRequest(
-        @Valid @PageParam PageRequestDto pageRequestDto
+        @Valid @PageableDefault Pageable pageable
     ) {
         PageResponseDto<GetProductResponseDto> pageResponseDto = productService.getAllByPage(
-            pageRequestDto);
+            pageable);
         return ResponseEntity.ok(pageResponseDto);
     }
 
