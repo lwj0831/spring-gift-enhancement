@@ -26,10 +26,10 @@ INSERT INTO member (id, name)
 VALUES (100, 'lee');
 
 
-
 INSERT INTO member_auth (id, email, password, refresh_token)
 VALUES (100, 'wjl0831@gmail.com', '$2a$10$JunqFWsxQbDLzmNAAgXNKuKW77ehhv9cuozq75SkkbJZEYtee1Zm.',
         'abcd');
+
 
 INSERT INTO wish_item (member_id, product_id)
 VALUES (100, 100);
@@ -45,4 +45,17 @@ INSERT INTO wish_item (member_id, product_id)
 VALUES (100, 109);
 INSERT INTO wish_item (member_id, product_id)
 VALUES (100, 110);
+
+INSERT INTO product_option (id, name, quantity, product_id)
+VALUES (100, "옵션명1", 100, 100);
+INSERT INTO product_option (id, name, quantity, product_id)
+VALUES (101, "옵션명1", 200, 100);
+INSERT INTO product_option (id, name, quantity, product_id)
+VALUES (102, "옵션명1", 300, 100);
+INSERT INTO product_option (id, name, quantity, product_id)
+VALUES (103, "옵션명1", 400, 100);
+INSERT INTO product_option (id, name, quantity, product_id)
+VALUES (104, "옵션명1", 500, 100);
+
+
 
