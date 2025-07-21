@@ -18,28 +18,40 @@ public class AuthExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidTokenException(
         InvalidTokenException exception) {
         logger.error("Invalid token exception: {}", exception.getMessage());
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
     @ExceptionHandler(ExpiredTokenException.class)
     public ResponseEntity<ErrorResponse> handleExpiredTokenException(
         ExpiredTokenException exception) {
         logger.error("Expired token exception: {}", exception.getMessage());
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
     @ExceptionHandler(DuplicatedEmailException.class)
     public ResponseEntity<ErrorResponse> handleDuplicatedEmailException(
         DuplicatedEmailException exception) {
         logger.error("Duplicated email exception: {}", exception.getMessage());
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
     @ExceptionHandler(PasswordMismatchException.class)
     public ResponseEntity<ErrorResponse> handlePasswordMismatchException(
         PasswordMismatchException exception) {
         logger.error("Password mismatch exception: {}", exception.getMessage());
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+
+        return ErrorResponseFactory.createErrorResponse(exception);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(
+        ForbiddenException exception) {
+        logger.error("Forbidden exception: {}", exception.getMessage());
+
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
 }

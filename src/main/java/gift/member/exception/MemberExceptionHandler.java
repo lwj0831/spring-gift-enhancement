@@ -3,7 +3,6 @@ package gift.member.exception;
 import gift.global.exception.ErrorResponseFactory;
 import gift.global.exception.dto.ErrorResponse;
 import gift.product.exception.ProductExceptionHandler;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +19,7 @@ public class MemberExceptionHandler {
         MemberNotFoundException exception) {
         logger.error("Member not found: {}", exception.getMessage(), exception);
 
-        Map<String, Object> additionalInfo = Map.of("id, email", exception.getUniqueValue());
-
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(), additionalInfo);
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
 }

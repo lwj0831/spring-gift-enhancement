@@ -18,8 +18,8 @@ public record ErrorResponse(
         return new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
     }
 
-    public static ErrorResponse from(ErrorCode errorCode, String errorMessage) {
-        return new ErrorResponse(errorCode.getErrorCode(), errorMessage);
+    public static ErrorResponse from(ErrorCode errorCode, String message) {
+        return new ErrorResponse(errorCode.getErrorCode(), message);
     }
 
     public static ErrorResponse from(ErrorCode errorCode, Map<String, Object> extras) {

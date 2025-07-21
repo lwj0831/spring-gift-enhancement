@@ -43,9 +43,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     private ErrorResponse determineErrorResponse(AuthenticationException authException) {
         if (authException instanceof BadCredentialsException) {
-            return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED, "잘못된 인증 정보입니다");
+            return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED);
         } else if (authException instanceof InsufficientAuthenticationException) {
-            return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED, "인증 정보가 부족합니다");
+            return ErrorResponse.from(AuthErrorCode.UNAUTHORIZED);
         } else if (authException.getMessage().contains("expired")) {
             return ErrorResponse.from(AuthErrorCode.EXPIRED_TOKEN);
         } else if (authException.getMessage().contains("invalid")) {

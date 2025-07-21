@@ -3,7 +3,6 @@ package gift.wishlist.exception;
 import gift.global.exception.ErrorResponseFactory;
 import gift.global.exception.dto.ErrorResponse;
 import gift.product.exception.ProductExceptionHandler;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +19,7 @@ public class WishItemExceptionHandler {
         WishItemNotFoundException exception) {
         logger.error("WishItem not found: {}", exception.getMessage(), exception);
 
-        Map<String, Object> additionalInfo = Map.of("id", exception.getNotFoundId());
-
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode(), additionalInfo);
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
     @ExceptionHandler(WishItemAlreadyExistsException.class)
@@ -30,7 +27,7 @@ public class WishItemExceptionHandler {
         WishItemAlreadyExistsException exception) {
         logger.error("WishItem already exists: {}", exception.getMessage(), exception);
 
-        return ErrorResponseFactory.createErrorResponse(exception.getErrorCode());
+        return ErrorResponseFactory.createErrorResponse(exception);
     }
 
 }
