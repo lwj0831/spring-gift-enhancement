@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 public record CreateProductOptionRequestDto(
     @Size(max = 50, message = "옵션 이름은 최대 50자까지 입력할 수 있습니다.")
     @Pattern(
-        regexp = "^[\\p{L}\\p{N} ()\\[\\]\\+\\-\\&/_]{1,50}$",
+        regexp = "^[\\p{L}\\p{N} ()\\[\\]\\+\\-\\&/_]*$",
         message = "허용되지 않은 특수 문자가 포함되어 있습니다."
     )
     @NotNull
