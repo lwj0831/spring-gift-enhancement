@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.global.common.dto.PageResponseDto;
 import gift.global.exception.GlobalExceptionHandler;
+import gift.product.dto.CreateProductOptionListRequestDto;
 import gift.product.dto.CreateProductOptionRequestDto;
 import gift.product.dto.GetProductOptionResponseDto;
 import gift.product.service.ProductOptionService;
@@ -54,82 +55,116 @@ class ProductOptionControllerTest {
     }
 
     @Test
-    @DisplayName("상품 옵션 등록 API 테스트 - 성공")
-    void registerProductOption_Success() throws Exception {
+    @DisplayName("상품 옵션 목록 등록 API 테스트 - 성공")
+    void registerProductOptionList_Success() throws Exception {
         // given
         Long productId = 1L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("테스트 옵션", 100);
+        List<CreateProductOptionRequestDto> optionDtos = List.of(
+            new CreateProductOptionRequestDto("옵션1", 100),
+            new CreateProductOptionRequestDto("옵션2", 200)
+        );
+        var requestDto = new CreateProductOptionListRequestDto(optionDtos);
 
-        when(productOptionService.registerProductOption(productId, dto)).thenReturn(1L);
-
+        // void 메서드라 when 없이 바로 검증
         // when & then
         mockMvc.perform(post("/api/products/{productId}/options", productId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isOk());
 
-        verify(productOptionService).registerProductOption(productId, dto);
+        verify(productOptionService).registerProductOptionList(productId, requestDto);
     }
 
     @Test
-    @DisplayName("상품 옵션 등록 API 테스트 - 유효성 검증 실패 (옵션명 길이 초과)")
-    void registerProductOption_ValidationFail_NameTooLong() throws Exception {
+    @DisplayName("상품 옵션 목록 등록 API 테스트 - 유효성 검증 실패 (옵션 이름 중복)")
+    void registerProductOptionList_ValidationFail_DuplicateName() throws Exception {
         // given
         Long productId = 1L;
-        String longName = "a".repeat(51); // 51자
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto(longName, 100);
+        List<CreateProductOptionRequestDto> duplicates = List.of(
+            new CreateProductOptionRequestDto("중복", 100),
+            new CreateProductOptionRequestDto("중복", 150)
+        );
+        var requestDto = new CreateProductOptionListRequestDto(duplicates);
 
         // when & then
         mockMvc.perform(post("/api/products/{productId}/options", productId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(
-                jsonPath("$.extras.invalid-params[0].reason").value("옵션 이름은 최대 50자까지 입력할 수 있습니다."));
-        ;
+                .content(objectMapper.writeValueAsString(requestDto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.extras.invalid-params[0].reason").value("옵션 이름은 중복될 수 없습니다."));
     }
+
+    @Test
+    @DisplayName("상품 옵션 목록 등록 API 테스트 - 유효성 검증 실패 (옵션이 비어 있음)")
+    void registerProductOptionList_ValidationFail_EmptyList() throws Exception {
+        // given
+        var requestDto = new CreateProductOptionListRequestDto(List.of());
+
+        // when & then
+        mockMvc.perform(post("/api/products/{productId}/options", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(
+                jsonPath("$.extras.invalid-params[0].reason").value("상품은 하나 이상의 옵션을 가져야 합니다."));
+    }
+
 
     @Test
     @DisplayName("상품 옵션 등록 API 테스트 - 유효성 검증 실패 (허용되지 않는 특수문자)")
     void registerProductOption_ValidationFail_InvalidCharacter() throws Exception {
         // given
         Long productId = 1L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("옵션@#$", 100);
+        CreateProductOptionRequestDto invalidOption = new CreateProductOptionRequestDto("옵션@#$",
+            100);
+        CreateProductOptionListRequestDto requestDto = new CreateProductOptionListRequestDto(
+            List.of(invalidOption));
 
         // when & then
         mockMvc.perform(post("/api/products/{productId}/options", productId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(
                 jsonPath("$.extras.invalid-params[0].reason").value("허용되지 않은 특수 문자가 포함되어 있습니다."));
     }
 
     @Test
-    @DisplayName("상품 옵션 등록 API 테스트 - 유효성 검증 실패 (수량 범위 초과)")
-    void registerProductOption_ValidationFail_QuantityExceedsMaximum() throws Exception {
+    @DisplayName("상품 옵션 목록 등록 API 테스트 - 유효성 검증 실패 (수량 범위 초과)")
+    void registerProductOptionList_ValidationFail_QuantityExceedsMaximum() throws Exception {
         // given
         Long productId = 1L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("옵션명", 100_000_000);
+        CreateProductOptionRequestDto invalidOption = new CreateProductOptionRequestDto("옵션명",
+            100_000_000);
+        CreateProductOptionListRequestDto requestDto = new CreateProductOptionListRequestDto(
+            List.of(invalidOption));
 
         // when & then
         mockMvc.perform(post("/api/products/{productId}/options", productId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isBadRequest());
+                .content(objectMapper.writeValueAsString(requestDto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.extras.invalid-params[0].reason")
+                .value("옵션 수량은 99999999 이하여야 합니다."));
     }
 
     @Test
-    @DisplayName("상품 옵션 등록 API 테스트 - 유효성 검증 실패 (수량 범위 미만)")
-    void registerProductOption_ValidationFail_QuantityBelowMinimum() throws Exception {
+    @DisplayName("상품 옵션 목록 등록 API 테스트 - 유효성 검증 실패 (수량 범위 미만)")
+    void registerProductOptionList_ValidationFail_QuantityBelowMinimum() throws Exception {
         // given
         Long productId = 1L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("옵션명", 0);
+        CreateProductOptionRequestDto invalidOption = new CreateProductOptionRequestDto("옵션명", 0);
+        CreateProductOptionListRequestDto requestDto = new CreateProductOptionListRequestDto(
+            List.of(invalidOption));
 
         // when & then
         mockMvc.perform(post("/api/products/{productId}/options", productId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isBadRequest());
+                .content(objectMapper.writeValueAsString(requestDto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.extras.invalid-params[0].reason")
+                .value("옵션 수량은 1 이상이어야 합니다."));
     }
+
 
     @Test
     @DisplayName("상품 옵션 조회 API 테스트")

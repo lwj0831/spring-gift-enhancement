@@ -15,8 +15,8 @@ public record CreateProductOptionRequestDto(
     @NotNull
     String name,
 
-    @Min(1)
-    @Max(99_999_999)
+    @Min(value = 1, message = "옵션 수량은 1 이상이어야 합니다.")
+    @Max(value = 99_999_999, message = "옵션 수량은 99999999 이하여야 합니다.")
     @NotNull
     int quantity
 ) {
