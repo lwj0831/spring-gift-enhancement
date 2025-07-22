@@ -1,5 +1,6 @@
 package gift.product.dto;
 
+import gift.product.validation.UniqueOptionNames;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -32,6 +33,7 @@ public record CreateProductRequestDto(
 
     @Valid
     @NotEmpty(message = "상품은 하나 이상의 옵션을 가져야 합니다.")
+    @UniqueOptionNames
     List<CreateProductOptionRequestDto> options
 ) {
 
