@@ -1,7 +1,7 @@
 package gift.product.controller;
 
 import gift.global.common.dto.PageResponseDto;
-import gift.product.dto.CreateProductOptionRequestDto;
+import gift.product.dto.CreateProductOptionListRequestDto;
 import gift.product.dto.GetProductOptionResponseDto;
 import gift.product.service.ProductOptionService;
 import jakarta.validation.Valid;
@@ -29,8 +29,8 @@ public class ProductOptionController {
     @PostMapping("/products/{productId}/options")
     public ResponseEntity<Void> registerProductOption(
         @PathVariable(name = "productId") Long productId,
-        @Valid @RequestBody CreateProductOptionRequestDto dto) {
-        productOptionService.registerProductOption(productId, dto);
+        @Valid @RequestBody CreateProductOptionListRequestDto dto) {
+        productOptionService.registerProductOptionList(productId, dto);
         return ResponseEntity.ok().build();
     }
 

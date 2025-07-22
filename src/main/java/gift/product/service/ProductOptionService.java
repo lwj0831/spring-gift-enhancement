@@ -3,10 +3,12 @@ package gift.product.service;
 import gift.global.common.dto.PageResponseDto;
 import gift.product.domain.Product;
 import gift.product.domain.ProductOption;
+import gift.product.dto.CreateProductOptionListRequestDto;
 import gift.product.dto.CreateProductOptionRequestDto;
 import gift.product.dto.GetProductOptionResponseDto;
 import gift.product.exception.ProductOptionNotFoundException;
 import gift.product.repository.ProductOptionJpaRepository;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +36,22 @@ public class ProductOptionService {
 
         ProductOption newProductOption = ProductOption.of(dto.name(), dto.quantity(), product);
         return productOptionRepository.save(newProductOption).getId();
+    }
 
+    @Transactional
+    public void registerProductOptionList(Long productId, CreateProductOptionListRequestDto dto) {
+        Product product = productService.findProductOrThrow(productId);
+
+        dto.optionRequestDtoList().forEach(
+            opt -> productOptionValidationService.validateOptionNameUniqueness(productId,
+                opt.name())
+        );
+
+        List<ProductOption> options = dto.optionRequestDtoList().stream()
+            .map(option -> ProductOption.of(option.name(), option.quantity(), product))
+            .toList();
+
+        productOptionRepository.saveAll(options);
     }
 
     @Transactional(readOnly = true)
