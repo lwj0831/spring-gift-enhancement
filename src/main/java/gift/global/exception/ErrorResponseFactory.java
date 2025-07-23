@@ -13,6 +13,13 @@ public class ErrorResponseFactory {
     }
 
     public static ResponseEntity<ErrorResponse> createErrorResponse(ErrorCode errorCode,
+        String message) {
+        return ResponseEntity
+            .status(errorCode.getStatus())
+            .body(ErrorResponse.from(errorCode, message, null));
+    }
+
+    public static ResponseEntity<ErrorResponse> createErrorResponse(ErrorCode errorCode,
         Map<String, Object> additionalInfo) {
         return ResponseEntity
             .status(errorCode.getStatus())

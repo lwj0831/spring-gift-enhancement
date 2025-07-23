@@ -74,6 +74,7 @@ public class GlobalExceptionHandler {
         IllegalArgumentException exception) {
         logger.error("IllegalArgumentException occurred: {}", exception.getMessage(), exception);
 
-        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR);
+        return ErrorResponseFactory.createErrorResponse(GlobalErrorCode.INVALID_ARGUMENT_ERROR,
+            exception.getMessage());
     }
 }
