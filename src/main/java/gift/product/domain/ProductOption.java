@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.regex.Pattern;
 
 @Entity
 @Table(
@@ -38,7 +39,29 @@ public class ProductOption {
     private static final int QUANTITY_MIN_VALUE = 1;
     private static final int QUANTITY_MAX_VALUE = 100000000;
 
+    private static final int NAME_MAX_LENGTH = 50;
+    private static final String NAME_PATTERN = "^[\\p{L}\\p{N} ()\\[\\]\\+\\-\\&/_]{1,50}$";
+    private static final Pattern NAME_REGEX = Pattern.compile(NAME_PATTERN);
+
     protected ProductOption() {
+    }
+
+    private ProductOption(Long id, String name, int quantity, Product product) {
+        validateName(name);
+        validateQuantity(quantity);
+
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.product = product;
+    }
+
+    public static ProductOption of(String name, int quantity) {
+        return new ProductOption(null, name, quantity, null);
+    }
+
+    public static ProductOption of(String name, int quantity, Product product) {
+        return new ProductOption(null, name, quantity, product);
     }
 
     public void setProduct(Product product) {
@@ -63,20 +86,28 @@ public class ProductOption {
         }
     }
 
-    private ProductOption(Long id, String name, int quantity, Product product) {
-        this.id = id;
-        this.name = name;
-        this.quantity = quantity;
-        this.product = product;
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("옵션 이름은 필수입니다.");
+        }
+        if (name.length() > NAME_MAX_LENGTH) {
+            throw new IllegalArgumentException("옵션 이름은 최대 " + NAME_MAX_LENGTH + "자까지 입력할 수 있습니다.");
+        }
+        if (!NAME_REGEX.matcher(name).matches()) {
+            throw new IllegalArgumentException("옵션 이름에 허용되지 않은 특수 문자가 포함되어 있습니다.");
+        }
     }
 
-    public static ProductOption of(String name, int quantity) {
-        return new ProductOption(null, name, quantity, null);
+    private void validateQuantity(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("옵션 수량은 음수일 수 없습니다.");
+        }
+        if (quantity < QUANTITY_MIN_VALUE || quantity >= QUANTITY_MAX_VALUE) {
+            throw new IllegalArgumentException(
+                "수량은 " + QUANTITY_MIN_VALUE + " 이상, " + QUANTITY_MAX_VALUE + " 미만이어야 합니다.");
+        }
     }
 
-    public static ProductOption of(String name, int quantity, Product product) {
-        return new ProductOption(null, name, quantity, product);
-    }
 
     public Long getId() {
         return id;
