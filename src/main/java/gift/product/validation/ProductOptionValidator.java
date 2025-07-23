@@ -1,15 +1,15 @@
-package gift.product.service;
+package gift.product.validation;
 
 import gift.product.exception.DuplicateProductOptionNameException;
 import gift.product.repository.ProductOptionJpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductOptionValidationService {
+public class ProductOptionValidator {
 
     private final ProductOptionJpaRepository productOptionRepository;
 
-    public ProductOptionValidationService(ProductOptionJpaRepository productOptionRepository) {
+    public ProductOptionValidator(ProductOptionJpaRepository productOptionRepository) {
         this.productOptionRepository = productOptionRepository;
     }
 

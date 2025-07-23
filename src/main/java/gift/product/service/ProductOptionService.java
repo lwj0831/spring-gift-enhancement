@@ -8,6 +8,7 @@ import gift.product.dto.CreateProductOptionRequestDto;
 import gift.product.dto.GetProductOptionResponseDto;
 import gift.product.exception.ProductOptionNotFoundException;
 import gift.product.repository.ProductOptionJpaRepository;
+import gift.product.validation.ProductOptionValidator;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,21 +19,21 @@ public class ProductOptionService {
 
     private final ProductOptionJpaRepository productOptionRepository;
     private final ProductService productService;
-    private final ProductOptionValidationService productOptionValidationService;
+    private final ProductOptionValidator productOptionValidator;
 
     public ProductOptionService(ProductOptionJpaRepository productOptionRepository,
         ProductService productService,
-        ProductOptionValidationService productOptionValidationService) {
+        ProductOptionValidator productOptionValidator) {
         this.productOptionRepository = productOptionRepository;
         this.productService = productService;
-        this.productOptionValidationService = productOptionValidationService;
+        this.productOptionValidator = productOptionValidator;
     }
 
     @Transactional
     public Long registerProductOption(Long productId, CreateProductOptionRequestDto dto) {
         Product product = productService.findProductOrThrow(productId);
 
-        productOptionValidationService.validateOptionNameUniqueness(productId, dto.name());
+        productOptionValidator.validateOptionNameUniqueness(productId, dto.name());
 
         ProductOption newProductOption = ProductOption.of(dto.name(), dto.quantity(), product);
         return productOptionRepository.save(newProductOption).getId();
@@ -43,7 +44,7 @@ public class ProductOptionService {
         Product product = productService.findProductOrThrow(productId);
 
         dto.optionRequestDtoList().forEach(
-            opt -> productOptionValidationService.validateOptionNameUniqueness(productId,
+            opt -> productOptionValidator.validateOptionNameUniqueness(productId,
                 opt.name())
         );
 
