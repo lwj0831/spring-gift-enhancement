@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.global.exception.dto.ErrorResponse;
-import gift.product.dto.CreateProductOptionRequestDto;
+import gift.product.dto.CreateProductOptionDto;
 import gift.product.dto.CreateProductRequestDto;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -104,15 +104,8 @@ class ProductApiStructuredE2ETest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(errorResponse.errorCode()).isEqualTo("GLOBAL-001");
+        assertThat(errorResponse.errorMessage()).contains("상품에는 최소 하나 이상의 옵션이 있어야 합니다.");
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, String>> invalidParams = (List<Map<String, String>>) errorResponse.extras()
-            .get("invalid-params");
-
-        assertThat(invalidParams).anySatisfy(param -> {
-            assertThat(param.get("name")).isEqualTo("options");
-            assertThat(param.get("reason")).contains("상품은 하나 이상의 옵션을 가져야 합니다");
-        });
     }
 
     @Test
@@ -133,8 +126,8 @@ class ProductApiStructuredE2ETest {
             () -> assertThat(errorResponse.errorMessage()).contains("다음 정렬 필드는 허용되지 않습니다"));
     }
 
-    private List<CreateProductOptionRequestDto> createValidOptions() {
-        return List.of(new CreateProductOptionRequestDto("옵션1", 100));
+    private List<CreateProductOptionDto> createValidOptions() {
+        return List.of(new CreateProductOptionDto("옵션1", 100));
     }
 
     private CreateProductRequestDto createValidProductRequest() {

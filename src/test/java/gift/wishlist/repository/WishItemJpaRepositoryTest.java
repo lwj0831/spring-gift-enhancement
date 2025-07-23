@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import gift.member.domain.Member;
 import gift.product.domain.Product;
+import gift.product.domain.ProductOption;
 import gift.wishlist.domain.WishItem;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,8 @@ class WishItemJpaRepositoryTest {
     @DisplayName("위시아이템을 저장하고 조회할 수 있다")
     void saveAndFindWishItem() {
         Member member = Member.of("lee");
-        Product product = Product.of("testProduct", 1000, "description", "image.jpg");
+        Product product = Product.of("testProduct", 1000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member);
         entityManager.persistAndFlush(product);
@@ -54,7 +56,8 @@ class WishItemJpaRepositoryTest {
     @DisplayName("멤버ID와 상품ID로 위시아이템을 조회할 수 있다")
     void findByMemberIdAndProductId() {
         Member member = Member.of("lee");
-        Product product = Product.of("testProduct", 1000, "description", "image.jpg");
+        Product product = Product.of("testProduct", 1000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member);
         entityManager.persistAndFlush(product);
@@ -84,8 +87,10 @@ class WishItemJpaRepositoryTest {
     @DisplayName("멤버ID로 상품 정보와 함께 위시아이템 목록을 페이지네이션으로 조회할 수 있다")
     void findAllWithProductByMemberId_withPaging() {
         Member member = Member.of("lee");
-        Product product1 = Product.of("testProduct", 1000, "description", "image.jpg");
-        Product product2 = Product.of("testProduct", 2000, "description", "image.jpg");
+        Product product1 = Product.of("testProduct", 1000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
+        Product product2 = Product.of("testProduct", 2000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member);
         entityManager.persistAndFlush(product1);
@@ -130,7 +135,8 @@ class WishItemJpaRepositoryTest {
     @DisplayName("위시아이템을 삭제할 수 있다")
     void deleteWishItem() {
         Member member = Member.of("lee");
-        Product product = Product.of("testProduct", 800000, "description", "image.jpg");
+        Product product = Product.of("testProduct", 800000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member);
         entityManager.persistAndFlush(product);
@@ -149,7 +155,8 @@ class WishItemJpaRepositoryTest {
     @DisplayName("ID로 위시아이템을 조회할 수 있다")
     void findById() {
         Member member = Member.of("lee");
-        Product product = Product.of("testProduct", 1000, "description", "image.jpg");
+        Product product = Product.of("testProduct", 1000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member);
         entityManager.persistAndFlush(product);
@@ -171,8 +178,10 @@ class WishItemJpaRepositoryTest {
     void countAllWishItems() {
         Member member1 = Member.of("lee");
         Member member2 = Member.of("kim");
-        Product product1 = Product.of("testProduct", 1000, "description", "image.jpg");
-        Product product2 = Product.of("testProduct", 2000, "description", "image.jpg");
+        Product product1 = Product.of("testProduct", 1000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
+        Product product2 = Product.of("testProduct", 2000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member1);
         entityManager.persistAndFlush(member2);
@@ -194,7 +203,8 @@ class WishItemJpaRepositoryTest {
     @DisplayName("위시아이템이 존재하는지 확인할 수 있다")
     void existsById() {
         Member member = Member.of("lee");
-        Product product = Product.of("testProduct", 1000, "description", "image.jpg");
+        Product product = Product.of("testProduct", 1000, "description", "image.jpg",
+            List.of(ProductOption.of("testOption", 10)));
 
         entityManager.persistAndFlush(member);
         entityManager.persistAndFlush(product);

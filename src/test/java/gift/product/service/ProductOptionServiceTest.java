@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import gift.product.domain.Product;
 import gift.product.domain.ProductOption;
-import gift.product.dto.CreateProductOptionRequestDto;
+import gift.product.dto.CreateProductOptionDto;
 import gift.product.exception.DuplicateProductOptionNameException;
 import gift.product.exception.ProductNotFoundException;
 import gift.product.exception.ProductOptionNotFoundException;
@@ -54,7 +54,7 @@ class ProductOptionServiceTest {
     void registerProductOption_Success() {
         // given
         Long productId = 1L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("옵션명", 100);
+        CreateProductOptionDto dto = new CreateProductOptionDto("옵션명", 100);
 
         when(productService.findProductOrThrow(productId)).thenReturn(mockProduct);
         when(productOptionRepository.save(any(ProductOption.class))).thenReturn(mockProductOption);
@@ -75,7 +75,7 @@ class ProductOptionServiceTest {
     void registerProductOption_ProductNotFound() {
         // given
         Long productId = 999L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("옵션명", 100);
+        CreateProductOptionDto dto = new CreateProductOptionDto("옵션명", 100);
 
         when(productService.findProductOrThrow(productId))
             .thenThrow(new ProductNotFoundException(productId));
@@ -90,7 +90,7 @@ class ProductOptionServiceTest {
     void registerProductOption_DuplicateOptionName() {
         // given
         Long productId = 1L;
-        CreateProductOptionRequestDto dto = new CreateProductOptionRequestDto("중복옵션", 100);
+        CreateProductOptionDto dto = new CreateProductOptionDto("중복옵션", 100);
 
         when(productService.findProductOrThrow(productId)).thenReturn(mockProduct);
         doThrow(new DuplicateProductOptionNameException("중복옵션"))
