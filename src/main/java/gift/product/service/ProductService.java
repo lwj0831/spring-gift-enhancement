@@ -53,19 +53,12 @@ public class ProductService {
     public Long createProduct(CreateProductRequestDto dto) {
         productValidator.validateProductName(dto.name());
 
-        Product newProduct = Product.of(
-            dto.name(),
-            dto.price(),
-            dto.description(),
-            dto.imageUrl()
-        );
+        List<ProductOption> options = dto.options().stream()
+            .map(opt -> ProductOption.of(opt.name(), opt.quantity()))
+            .toList();
 
-        dto.options()
-            .forEach((optionDto) -> {
-                ProductOption option = ProductOption.of(optionDto.name(), optionDto.quantity(),
-                    newProduct);
-                newProduct.addOption(option);
-            });
+        Product newProduct = Product.of(dto.name(), dto.price(), dto.description(), dto.imageUrl(),
+            options);
 
         return productRepository.save(newProduct).getId();
     }

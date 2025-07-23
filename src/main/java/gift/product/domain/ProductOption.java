@@ -32,7 +32,7 @@ public class ProductOption {
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     private static final int QUANTITY_MIN_VALUE = 1;
@@ -50,7 +50,7 @@ public class ProductOption {
         if (result >= QUANTITY_MAX_VALUE) {
             this.quantity = result;
         } else {
-            throw new IllegalArgumentException("상품 수량 최대값(100000000) 초과입니다.");
+            throw new IllegalArgumentException("상품 수량 최대값(" + QUANTITY_MAX_VALUE + ") 초과입니다.");
         }
     }
 
@@ -70,12 +70,12 @@ public class ProductOption {
         this.product = product;
     }
 
-    public static ProductOption of(String name, int quantity, Product product) {
-        return new ProductOption(null, name, quantity, product);
+    public static ProductOption of(String name, int quantity) {
+        return new ProductOption(null, name, quantity, null);
     }
 
-    public static ProductOption withId(Long id, String name, int quantity, Product product) {
-        return new ProductOption(id, name, quantity, product);
+    public static ProductOption of(String name, int quantity, Product product) {
+        return new ProductOption(null, name, quantity, product);
     }
 
     public Long getId() {

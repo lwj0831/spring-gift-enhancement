@@ -37,21 +37,29 @@ public class Product {
         productOption.setProduct(this);
     }
 
-    private Product(Long id, String name, int price, String description, String imageUrl) {
+    private Product(Long id, String name, int price, String description, String imageUrl,
+        List<ProductOption> options) {
+
+        validateOptionAtLeastOne(options);
+
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.options = options;
+        options.forEach(this::addOption);
     }
 
-    public static Product of(String name, int price, String description, String imageUrl) {
-        return new Product(null, name, price, description, imageUrl);
+    private void validateOptionAtLeastOne(List<ProductOption> options) {
+        if (options == null || options.isEmpty()) {
+            throw new IllegalArgumentException("상품에는 최소 하나 이상의 옵션이 있어야 합니다.");
+        }
     }
 
-    public static Product withId(Long id, String name, int price, String description,
-        String imageUrl) {
-        return new Product(id, name, price, description, imageUrl);
+    public static Product of(String name, int price, String description, String imageUrl,
+        List<ProductOption> options) {
+        return new Product(null, name, price, description, imageUrl, options);
     }
 
     public void update(String name, int price, String description,
