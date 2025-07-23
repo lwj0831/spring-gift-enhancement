@@ -53,7 +53,7 @@ public class ProductOption {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
-        this.product = product;
+        setProduct(product);
     }
 
     public static ProductOption of(String name, int quantity) {
@@ -71,18 +71,18 @@ public class ProductOption {
     public void addQuantity(int quantity) {
         int result = this.quantity + quantity;
         if (result >= QUANTITY_MAX_VALUE) {
-            this.quantity = result;
-        } else {
             throw new IllegalArgumentException("상품 수량 최대값(" + QUANTITY_MAX_VALUE + ") 초과입니다.");
+        } else {
+            this.quantity = result;
         }
     }
 
     public void subtractQuantity(int quantity) {
         int result = this.quantity - quantity;
-        if (result >= QUANTITY_MIN_VALUE) {
-            this.quantity = result;
-        } else {
+        if (result < QUANTITY_MIN_VALUE) {
             throw new IllegalArgumentException("상품 수량이 부족합니다");
+        } else {
+            this.quantity = result;
         }
     }
 
@@ -99,12 +99,9 @@ public class ProductOption {
     }
 
     private void validateQuantity(int quantity) {
-        if (quantity < 0) {
-            throw new IllegalArgumentException("옵션 수량은 음수일 수 없습니다.");
-        }
         if (quantity < QUANTITY_MIN_VALUE || quantity >= QUANTITY_MAX_VALUE) {
             throw new IllegalArgumentException(
-                "수량은 " + QUANTITY_MIN_VALUE + " 이상, " + QUANTITY_MAX_VALUE + " 미만이어야 합니다.");
+                "옵션 수량은 " + QUANTITY_MIN_VALUE + " 이상, " + QUANTITY_MAX_VALUE + " 미만이어야 합니다.");
         }
     }
 
