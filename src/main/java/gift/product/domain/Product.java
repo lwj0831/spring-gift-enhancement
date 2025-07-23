@@ -1,5 +1,6 @@
 package gift.product.domain;
 
+import gift.product.exception.DuplicateProductOptionNameException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +34,7 @@ public class Product {
     }
 
     public void addOption(ProductOption productOption) {
+        validateOptionNameDuplicate(productOption.getName());
         options.add(productOption);
         productOption.setProduct(this);
     }
@@ -47,13 +49,20 @@ public class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.options = options;
         options.forEach(this::addOption);
     }
 
     private void validateOptionAtLeastOne(List<ProductOption> options) {
         if (options == null || options.isEmpty()) {
             throw new IllegalArgumentException("상품에는 최소 하나 이상의 옵션이 있어야 합니다.");
+        }
+    }
+
+    private void validateOptionNameDuplicate(String optionName) {
+        boolean exists = this.options.stream()
+            .anyMatch(o -> o.getName().equals(optionName));
+        if (exists) {
+            throw new DuplicateProductOptionNameException(optionName);
         }
     }
 
