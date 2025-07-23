@@ -33,7 +33,7 @@ public class ProductOptionService {
     public Long registerProductOption(Long productId, CreateProductOptionDto dto) {
         Product product = productService.findProductOrThrow(productId);
 
-        productOptionValidator.validateOptionNameUniqueness(productId, dto.name());
+        productOptionValidator.validateOptionNameUniqueness(productId, List.of(dto.name()));
 
         ProductOption newProductOption = ProductOption.of(dto.name(), dto.quantity(), product);
         return productOptionRepository.save(newProductOption).getId();
@@ -43,15 +43,18 @@ public class ProductOptionService {
     public void registerProductOptionList(Long productId, CreateProductOptionsRequestDto dto) {
         Product product = productService.findProductOrThrow(productId);
 
-        dto.optionRequestDtoList().forEach(
-            opt -> productOptionValidator.validateOptionNameUniqueness(productId,
-                opt.name())
-        );
+        List<String> names = dto.optionRequestDtoList().stream()
+            .map(CreateProductOptionDto::name).toList();
+
+        //옵션명 중복 검증 - 요청 DTO간 검증
+        productOptionValidator.validateOptionNameDuplicateInRequest(names);
+
+        //옵션명 중복 검증 - 기존 DB에 저장된 엔티티 대상 검증
+        productOptionValidator.validateOptionNameUniqueness(productId, names);
 
         List<ProductOption> options = dto.optionRequestDtoList().stream()
             .map(option -> ProductOption.of(option.name(), option.quantity(), product))
             .toList();
-
         productOptionRepository.saveAll(options);
     }
 
