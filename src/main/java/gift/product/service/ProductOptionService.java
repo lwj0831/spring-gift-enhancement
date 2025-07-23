@@ -3,8 +3,8 @@ package gift.product.service;
 import gift.global.common.dto.PageResponseDto;
 import gift.product.domain.Product;
 import gift.product.domain.ProductOption;
-import gift.product.dto.CreateProductOptionListRequestDto;
-import gift.product.dto.CreateProductOptionRequestDto;
+import gift.product.dto.CreateProductOptionDto;
+import gift.product.dto.CreateProductOptionsRequestDto;
 import gift.product.dto.GetProductOptionResponseDto;
 import gift.product.exception.ProductOptionNotFoundException;
 import gift.product.repository.ProductOptionJpaRepository;
@@ -30,7 +30,7 @@ public class ProductOptionService {
     }
 
     @Transactional
-    public Long registerProductOption(Long productId, CreateProductOptionRequestDto dto) {
+    public Long registerProductOption(Long productId, CreateProductOptionDto dto) {
         Product product = productService.findProductOrThrow(productId);
 
         productOptionValidator.validateOptionNameUniqueness(productId, dto.name());
@@ -40,7 +40,7 @@ public class ProductOptionService {
     }
 
     @Transactional
-    public void registerProductOptionList(Long productId, CreateProductOptionListRequestDto dto) {
+    public void registerProductOptionList(Long productId, CreateProductOptionsRequestDto dto) {
         Product product = productService.findProductOrThrow(productId);
 
         dto.optionRequestDtoList().forEach(
