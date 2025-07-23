@@ -16,6 +16,7 @@ import gift.product.exception.ProductNotFoundException;
 import gift.product.exception.ProductOptionNotFoundException;
 import gift.product.repository.ProductOptionJpaRepository;
 import gift.product.validation.ProductOptionValidator;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +67,7 @@ class ProductOptionServiceTest {
         // then
         assertThat(result).isEqualTo(1L);
         verify(productService).findProductOrThrow(productId);
-        verify(productOptionValidator).validateOptionNameUniqueness(productId, dto.name());
+        verify(productOptionValidator).validateOptionNameUniqueness(productId, List.of(dto.name()));
         verify(productOptionRepository).save(any(ProductOption.class));
     }
 
@@ -95,7 +96,7 @@ class ProductOptionServiceTest {
         when(productService.findProductOrThrow(productId)).thenReturn(mockProduct);
         doThrow(new DuplicateProductOptionNameException("중복옵션"))
             .when(productOptionValidator)
-            .validateOptionNameUniqueness(productId, dto.name());
+            .validateOptionNameUniqueness(productId, List.of(dto.name()));
 
         // when & then
         assertThatThrownBy(() -> productOptionService.registerProductOption(productId, dto))
